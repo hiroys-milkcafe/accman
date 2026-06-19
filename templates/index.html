@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}ホーム — accman{% endblock %}
+{% block content %}
+<h2>メニュー</h2>
+<ul class="menu-list">
+  {% if pam_templates %}
+  <li><a href="{{ url_for('pam.index') }}">PAM設定</a><span class="menu-desc">ユーザ・グループ・Sudoer の管理</span></li>
+  {% endif %}
+  {% if mail_templates %}
+  <li><a href="{{ url_for('mail.index') }}">メール管理</a><span class="menu-desc">メールアカウントの管理</span></li>
+  {% endif %}
+</ul>
+{% endblock %}

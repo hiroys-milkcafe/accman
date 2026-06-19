@@ -9,7 +9,7 @@
 | GET | `/mail/` | エントリ一覧 |
 | GET | `/mail/new?template=<id>` | 新規作成フォーム |
 | POST | `/mail/new` | 新規作成処理 |
-| GET | `/mail/edit?dn=<dn>` | 編集フォーム |
+| GET | `/mail/edit?dn=<dn>&template=<id>` | 編集フォーム |
 | POST | `/mail/edit` | 編集処理 |
 | POST | `/mail/delete` | 削除処理 |
 
@@ -22,7 +22,7 @@
 
 ### フォームの入力項目
 
-PAM管理UIと同じルールでテンプレートの `attributes` 定義からフォームを生成する（[PAM管理UI設計](draft_pam_ui.md) 参照）。
+PAM管理UIと同じルールでテンプレートの `attributes` 定義からフォームを生成する（[PAM管理UI設計](confirmed_pam_ui.md) 参照）。
 
 ### 新規作成処理 `/mail/new` POST
 

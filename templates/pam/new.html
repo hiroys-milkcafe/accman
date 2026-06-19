@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ template.name }} 新規作成 — accman{% endblock %}
+{% block content %}
+<h2>{{ template.name }} 新規作成</h2>
+
+<form method="post" action="{{ url_for('pam.new') }}">
+  <input type="hidden" name="template_id" value="{{ template.id }}">
+
+  {% for attr_def in template.attributes %}
+  <div class="field">
+    <label>{{ attr_def.label }}{% if attr_def.required %} <span class="required">*</span>{% endif %}</label>
+    {% if attr_def.multi %}
+    <div class="multi-field" id="multi-{{ attr_def.attr }}">
+      <div class="multi-row">
+        <input type="{{ 'password' if attr_def.type == 'password' else ('number' if attr_def.type == 'number' else 'text') }}"
+               name="{{ attr_def.attr }}"
+               {% if attr_def.required %}required{% endif %}>
+        <button type="button" class="btn-sm" onclick="removeRow(this)">－</button>
+      </div>
+    </div>
+    <button type="button" class="btn-sm"
+            onclick="addRow('multi-{{ attr_def.attr }}', '{{ attr_def.attr }}', '{{ attr_def.type }}')">＋ 追加</button>
+    {% else %}
+    <input type="{{ 'password' if attr_def.type == 'password' else ('number' if attr_def.type == 'number' else 'text') }}"
+           name="{{ attr_def.attr }}"
+           {% if attr_def.required %}required{% endif %}>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <div class="form-actions">
+    <button type="submit" class="btn-primary">作成</button>
+    <a href="{{ url_for('pam.index', tab=template.id) }}" class="btn-secondary">キャンセル</a>
+  </div>
+</form>
+
+<script src="{{ url_for('static', filename='js/multi_field.js') }}"></script>
+{% endblock %}

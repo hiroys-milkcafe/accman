@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}PAM設定 — accman{% endblock %}
+{% block content %}
+<h2>PAM設定</h2>
+
+{% if templates %}
+<div class="tabs">
+  {% for tmpl in templates %}
+  <a href="{{ url_for('pam.index', tab=tmpl.id) }}"
+     class="tab {% if current_tab and current_tab.id == tmpl.id %}active{% endif %}">
+    {{ tmpl.name }}
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if current_tab %}
+<div class="toolbar">
+  <a href="{{ url_for('pam.new', template=current_tab.id) }}" class="btn-primary">新規作成</a>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      {% for attr_def in display_attrs %}
+      <th>{{ attr_def.label }}</th>
+      {% endfor %}
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in entries %}
+    <tr>
+      {% for attr_def in display_attrs %}
+      <td>{{ entry.get(attr_def.attr, []) | join(', ') }}</td>
+      {% endfor %}
+      <td class="actions">
+        <a href="{{ url_for('pam.edit', dn=entry.dn, template=current_tab.id) }}">編集</a>
+        <form method="post" action="{{ url_for('pam.delete') }}" class="inline-form"
+              onsubmit="return confirm('削除しますか？')">
+          <input type="hidden" name="dn" value="{{ entry.dn }}">
+          <input type="hidden" name="tab" value="{{ current_tab.id }}">
+          <button type="submit" class="btn-link btn-danger">削除</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="{{ display_attrs|length + 1 }}">エントリがありません</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

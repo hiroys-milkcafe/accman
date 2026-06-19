@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}ログイン — accman{% endblock %}
+{% block content %}
+<div class="login-box">
+  <h2>ログイン</h2>
+  <form method="post" action="{{ url_for('auth.login') }}">
+    <div class="field">
+      <label for="uid">ユーザID</label>
+      <input type="text" id="uid" name="uid" required autofocus>
+    </div>
+    <div class="field">
+      <label for="password">パスワード</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+    <div class="field">
+      <button type="submit" class="btn-primary">ログイン</button>
+    </div>
+  </form>
+  <p class="alt-login"><a href="{{ url_for('auth.admin_login') }}">管理者ログイン</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ template.name }} 編集 — accman{% endblock %}
+{% block content %}
+<h2>{{ template.name }} 編集</h2>
+<p class="dn-label">DN: <code>{{ dn }}</code></p>
+
+<form method="post" action="{{ url_for('pam.edit') }}">
+  <input type="hidden" name="dn" value="{{ dn }}">
+  <input type="hidden" name="template_id" value="{{ template.id }}">
+
+  {% for attr_def in template.attributes %}
+  <div class="field">
+    <label>{{ attr_def.label }}{% if attr_def.required %} <span class="required">*</span>{% endif %}</label>
+    {% if attr_def.type == 'password' %}
+    <input type="hidden" name="{{ attr_def.attr }}" id="hidden-pw-{{ attr_def.attr }}">
+    <button type="button" class="btn-secondary"
+            onclick="openPasswordModal('{{ attr_def.attr }}', '{{ attr_def.label }}')">パスワード変更</button>
+    <span id="pw-badge-{{ attr_def.attr }}" class="pw-badge" style="display:none">設定済み</span>
+    {% elif attr_def.multi %}
+    <div class="multi-field" id="multi-{{ attr_def.attr }}">
+      {% set vals = entry.get(attr_def.attr, ['']) %}
+      {% for val in (vals if vals else ['']) %}
+      <div class="multi-row">
+        <input type="{{ 'number' if attr_def.type == 'number' else 'text' }}"
+               name="{{ attr_def.attr }}"
+               value="{{ val }}"
+               {% if attr_def.required and loop.first %}required{% endif %}>
+        <button type="button" class="btn-sm" onclick="removeRow(this)">－</button>
+      </div>
+      {% endfor %}
+    </div>
+    <button type="button" class="btn-sm"
+            onclick="addRow('multi-{{ attr_def.attr }}', '{{ attr_def.attr }}', '{{ attr_def.type }}')">＋ 追加</button>
+    {% else %}
+    <input type="{{ 'number' if attr_def.type == 'number' else 'text' }}"
+           name="{{ attr_def.attr }}"
+           value="{{ entry.get(attr_def.attr, [''])[0] }}"
+           {% if attr_def.required %}required{% endif %}>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <div class="form-actions">
+    <button type="submit" class="btn-primary">保存</button>
+    <a href="{{ url_for('pam.index', tab=template.id) }}" class="btn-secondary">キャンセル</a>
+  </div>
+</form>
+
+<div id="password-modal" class="modal">
+  <div class="modal-backdrop" onclick="closePasswordModal()"></div>
+  <div class="modal-box">
+    <h3 id="modal-pw-title">パスワード変更</h3>
+    <div class="field">
+      <label for="modal-pw-input">新しいパスワード</label>
+      <input type="password" id="modal-pw-input">
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn-primary" onclick="confirmPassword()">設定</button>
+      <button type="button" class="btn-secondary" onclick="closePasswordModal()">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/multi_field.js') }}"></script>
+{% endblock %}
