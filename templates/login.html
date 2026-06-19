@@ -19,3 +19,16 @@
   <p class="alt-login"><a href="{{ url_for('auth.admin_login') }}">管理者ログイン</a></p>
 </div>
 {% endblock %}
+
+{% block manual %}
+<h4>ログイン</h4>
+<p>LDAPアカウントのユーザIDとパスワードでログインします。</p>
+<ul>
+  <li><strong>ユーザID</strong>: LDAPアカウントの uid</li>
+  <li><strong>パスワード</strong>: LDAPアカウントのパスワード</li>
+</ul>
+<p>ログインに成功するとメニュー画面に遷移します。</p>
+
+<h4>管理者ログイン</h4>
+<p>管理者としてログインする場合は「管理者ログイン」リンクをクリックしてください。管理者ログイン画面ではパスワードのみ入力します。</p>
+{% endblock %}

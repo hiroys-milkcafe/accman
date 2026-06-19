@@ -10,8 +10,8 @@
   <header>
     <div class="header-inner">
       <a class="site-title" href="{{ url_for('auth.index') }}">accman</a>
-      {% if session.bind_dn %}
       <nav>
+        {% if session.bind_dn %}
         {% if pam_templates %}
         <a href="{{ url_for('pam.index') }}">PAM設定</a>
         {% endif %}
@@ -21,8 +21,9 @@
         <form action="{{ url_for('auth.logout') }}" method="post" class="inline-form">
           <button type="submit" class="btn-link">ログアウト</button>
         </form>
+        {% endif %}
+        <button type="button" class="btn-manual" onclick="openManual()">ヘルプ</button>
       </nav>
-      {% endif %}
     </div>
   </header>
 
@@ -35,5 +36,26 @@
 
     {% block content %}{% endblock %}
   </main>
+
+  <aside class="manual-drawer" id="manual-drawer">
+    <div class="manual-drawer-header">
+      <h3>操作マニュアル</h3>
+      <button type="button" class="manual-close" onclick="closeManual()">&#x2715;</button>
+    </div>
+    <div class="manual-body">
+      {% block manual %}{% endblock %}
+    </div>
+  </aside>
+
+  <script>
+    function openManual() {
+      document.getElementById('manual-drawer').classList.add('open');
+      document.body.classList.add('manual-open');
+    }
+    function closeManual() {
+      document.getElementById('manual-drawer').classList.remove('open');
+      document.body.classList.remove('manual-open');
+    }
+  </script>
 </body>
 </html>

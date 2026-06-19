@@ -51,3 +51,20 @@
 </table>
 {% endif %}
 {% endblock %}
+
+{% block manual %}
+<h4>メール管理一覧</h4>
+{% if is_admin %}
+<p>管理者としてすべてのメールエントリを操作できます。</p>
+{% else %}
+<p>LDAPサーバのACL設定に従って、表示・操作できるエントリが制限されます。</p>
+{% endif %}
+<p>MTAおよびIMAP/POPサーバが使用するメールアカウント情報を管理します。</p>
+
+<h4>操作</h4>
+<ul>
+  <li><strong>新規作成</strong>: 新しいメールアカウントを作成します</li>
+  <li><strong>編集</strong>: 選択したアカウントの内容を変更します</li>
+  <li><strong>削除</strong>: アカウントを削除します。削除後は元に戻せません</li>
+</ul>
+{% endblock %}

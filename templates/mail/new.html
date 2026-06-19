@@ -36,3 +36,24 @@
 
 <script src="{{ url_for('static', filename='js/multi_field.js') }}"></script>
 {% endblock %}
+
+{% block manual %}
+<h4>{{ template.name }} 新規作成</h4>
+<p>新しいメールアカウントを作成します。入力後「作成」ボタンをクリックしてください。</p>
+
+<h4>入力規則</h4>
+<ul>
+  <li><strong><span style="color:#c53030">*</span> 付きの項目</strong>: 必須入力です</li>
+  <li><strong>＋ 追加</strong>: 複数の値を入力できる項目に行を追加します</li>
+  <li><strong>－</strong>: 入力行を削除します</li>
+</ul>
+
+<h4>各項目の説明</h4>
+{% for attr_def in template.attributes %}
+<p><strong>{{ attr_def.label }}</strong>{% if attr_def.required %} <span style="color:#c53030">（必須）</span>{% endif %}<br>
+{% if attr_def.attr == 'uid' %}メールアカウントを一意に識別するIDです。作成後は変更できません。{% endif %}
+{% if attr_def.attr == 'mail' %}このアカウントに関連付けるメールアドレスです。「＋ 追加」で複数設定できます（エイリアスや別ドメインアドレスを追加する場合など）。{% endif %}
+{% if attr_def.attr == 'userPassword' %}メール認証（IMAP/POP/SMTP）に使用するパスワードです。入力値はSSHAでハッシュ化して保存されます。{% endif %}
+</p>
+{% endfor %}
+{% endblock %}

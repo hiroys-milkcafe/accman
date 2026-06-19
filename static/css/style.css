@@ -5,6 +5,10 @@ body {
   font-size: 14px;
   color: #222;
   background: #f5f5f5;
+  transition: padding-right .25s ease;
+}
+body.manual-open {
+  padding-right: 400px;
 }
 
 /* ---- Header ---- */
@@ -185,6 +189,71 @@ tr:hover td { background: #f9f9f9; }
 
 /* ---- Inline form (logout, delete) ---- */
 .inline-form { display: inline; }
+
+/* ---- Manual button (header) ---- */
+.btn-manual {
+  background: none;
+  border: 1px solid rgba(255,255,255,.5);
+  color: #fff;
+  border-radius: 4px;
+  padding: 0.2rem 0.7rem;
+  cursor: pointer;
+  font-size: 13px;
+}
+.btn-manual:hover { background: rgba(255,255,255,.15); }
+
+/* ---- Manual drawer ---- */
+.manual-drawer {
+  position: fixed;
+  top: 0; right: -420px;
+  width: 400px; height: 100%;
+  background: #fff;
+  z-index: 301;
+  overflow-y: auto;
+  transition: right .25s ease;
+  box-shadow: -4px 0 16px rgba(0,0,0,.15);
+}
+.manual-drawer.open { right: 0; }
+
+.manual-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  background: #2c3e50;
+  color: #fff;
+  position: sticky;
+  top: 0;
+}
+.manual-drawer-header h3 { font-size: 1rem; font-weight: bold; }
+.manual-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.manual-body { padding: 1.2rem 1rem; }
+.manual-body h4 {
+  margin: 1.2rem 0 0.4rem;
+  font-size: 0.85rem;
+  color: #2c3e50;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.3rem;
+}
+.manual-body h4:first-child { margin-top: 0; }
+.manual-body p { margin-bottom: 0.6rem; font-size: 13px; line-height: 1.7; color: #333; }
+.manual-body ul { margin: 0.3rem 0 0.6rem 1.4rem; font-size: 13px; line-height: 1.9; color: #333; }
+.manual-note {
+  font-size: 12px;
+  color: #555;
+  background: #f0f4f8;
+  border-left: 3px solid #4a90c4;
+  padding: 0.5rem 0.8rem;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
 
 /* ---- Password modal ---- */
 .modal {

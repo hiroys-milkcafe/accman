@@ -36,3 +36,33 @@
 
 <script src="{{ url_for('static', filename='js/multi_field.js') }}"></script>
 {% endblock %}
+
+{% block manual %}
+<h4>{{ template.name }} 新規作成</h4>
+<p>新しいエントリを作成します。入力後「作成」ボタンをクリックしてください。</p>
+
+<h4>入力規則</h4>
+<ul>
+  <li><strong><span style="color:#c53030">*</span> 付きの項目</strong>: 必須入力です</li>
+  <li><strong>＋ 追加</strong>: 複数の値を入力できる項目に行を追加します</li>
+  <li><strong>－</strong>: 入力行を削除します</li>
+</ul>
+
+<h4>各項目の説明</h4>
+{% for attr_def in template.attributes %}
+<p><strong>{{ attr_def.label }}</strong>{% if attr_def.required %} <span style="color:#c53030">（必須）</span>{% endif %}<br>
+{% if attr_def.attr == 'uid' %}LDAPエントリを一意に識別するIDです。作成後は変更できません。{% endif %}
+{% if attr_def.attr == 'cn' %}表示名または名称です。{% endif %}
+{% if attr_def.attr == 'userPassword' %}ログイン認証に使用するパスワードです。入力値はSSHAでハッシュ化して保存されます。{% endif %}
+{% if attr_def.attr == 'uidNumber' %}Linuxシステムが使用するユーザの数値IDです。システム内で一意の値を設定してください。{% endif %}
+{% if attr_def.attr == 'gidNumber' %}Linuxシステムが使用するグループの数値IDです。{% endif %}
+{% if attr_def.attr == 'homeDirectory' %}ユーザのホームディレクトリのフルパスです（例: /home/username）。{% endif %}
+{% if attr_def.attr == 'loginShell' %}ユーザが使用するシェルのフルパスです（例: /bin/bash）。{% endif %}
+{% if attr_def.attr == 'memberUid' %}グループに所属させるユーザの uid を入力します。「＋ 追加」で複数設定できます。{% endif %}
+{% if attr_def.attr == 'sudoUser' %}sudo を許可するユーザまたはグループを指定します。グループは % を先頭に付けます（例: %wheel）。{% endif %}
+{% if attr_def.attr == 'sudoHost' %}sudo を許可するホストを指定します。すべてのホストを許可する場合は ALL と入力します。{% endif %}
+{% if attr_def.attr == 'sudoCommand' %}sudo で実行を許可するコマンドのフルパスを指定します。すべて許可する場合は ALL と入力します。{% endif %}
+{% if attr_def.attr == 'sudoOption' %}sudo の追加オプションを指定します（例: !authenticate）。省略可能です。{% endif %}
+</p>
+{% endfor %}
+{% endblock %}

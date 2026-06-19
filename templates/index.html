@@ -11,3 +11,23 @@
   {% endif %}
 </ul>
 {% endblock %}
+
+{% block manual %}
+<h4>メニュー</h4>
+{% if is_admin %}
+<p>管理者としてログインしています。すべてのPAMアカウントとメールアカウントの管理が可能です。</p>
+{% else %}
+<p>一般ユーザとしてログインしています。LDAPサーバのACL設定に従って、操作できる範囲が制限されます。</p>
+{% endif %}
+
+<h4>PAM設定</h4>
+<p>Linuxシステムの認証に使用するアカウント情報をLDAP上で管理します。</p>
+<ul>
+  <li><strong>PAMユーザ</strong>: ログインユーザアカウントの管理</li>
+  <li><strong>PAMグループ</strong>: グループの管理</li>
+  <li><strong>Sudoer</strong>: sudo実行権限の管理</li>
+</ul>
+
+<h4>メール管理</h4>
+<p>MTAおよびIMAP/POPサーバが使用するメールアカウント情報をLDAP上で管理します。</p>
+{% endblock %}

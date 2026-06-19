@@ -63,3 +63,37 @@
 
 <script src="{{ url_for('static', filename='js/multi_field.js') }}"></script>
 {% endblock %}
+
+{% block manual %}
+<h4>{{ template.name }} 編集</h4>
+<p>エントリの内容を変更します。編集後「保存」ボタンをクリックしてください。</p>
+
+<h4>パスワードの変更</h4>
+<p>「パスワード変更」ボタンをクリックするとダイアログが開きます。新しいパスワードを入力して「設定」をクリックしてください。</p>
+<div class="manual-note">「パスワード変更」ボタンを押さずに「保存」した場合、パスワードは変更されません。</div>
+
+<h4>複数値の項目</h4>
+<ul>
+  <li><strong>＋ 追加</strong>: 値の入力行を追加します</li>
+  <li><strong>－</strong>: 入力行を削除します</li>
+</ul>
+<div class="manual-note">任意項目（<span style="color:#c53030">*</span> なし）をすべて空欄にして保存すると、その属性がエントリから削除されます。必須項目（<span style="color:#c53030">*</span> あり）は空欄のまま保存できません。</div>
+
+<h4>各項目の説明</h4>
+{% for attr_def in template.attributes %}
+<p><strong>{{ attr_def.label }}</strong>{% if attr_def.required %} <span style="color:#c53030">（必須）</span>{% endif %}<br>
+{% if attr_def.attr == 'uid' %}LDAPエントリを一意に識別するIDです。編集画面では変更できません。{% endif %}
+{% if attr_def.attr == 'cn' %}表示名または名称です。{% endif %}
+{% if attr_def.attr == 'userPassword' %}ログイン認証に使用するパスワードです。「パスワード変更」ボタンから変更します。{% endif %}
+{% if attr_def.attr == 'uidNumber' %}Linuxシステムが使用するユーザの数値IDです。{% endif %}
+{% if attr_def.attr == 'gidNumber' %}Linuxシステムが使用するグループの数値IDです。{% endif %}
+{% if attr_def.attr == 'homeDirectory' %}ユーザのホームディレクトリのフルパスです。{% endif %}
+{% if attr_def.attr == 'loginShell' %}ユーザが使用するシェルのフルパスです。{% endif %}
+{% if attr_def.attr == 'memberUid' %}グループに所属するユーザの uid の一覧です。「＋ 追加」で複数設定できます。{% endif %}
+{% if attr_def.attr == 'sudoUser' %}sudo を許可するユーザまたはグループです。グループは % を先頭に付けます。{% endif %}
+{% if attr_def.attr == 'sudoHost' %}sudo を許可するホストです。ALL ですべてのホストを対象にできます。{% endif %}
+{% if attr_def.attr == 'sudoCommand' %}sudo で実行を許可するコマンドです。ALL ですべて許可できます。{% endif %}
+{% if attr_def.attr == 'sudoOption' %}sudo の追加オプションです。省略可能です。{% endif %}
+</p>
+{% endfor %}
+{% endblock %}

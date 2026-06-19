@@ -51,3 +51,27 @@
 </table>
 {% endif %}
 {% endblock %}
+
+{% block manual %}
+<h4>PAM設定一覧</h4>
+{% if is_admin %}
+<p>管理者としてすべてのPAMエントリを操作できます。</p>
+{% else %}
+<p>LDAPサーバのACL設定に従って、表示・操作できるエントリが制限されます。</p>
+{% endif %}
+
+<h4>タブ</h4>
+<p>画面上部のタブをクリックするとエントリの種別を切り替えられます。</p>
+<ul>
+  <li><strong>PAMユーザ</strong>: Linuxへのログインユーザ</li>
+  <li><strong>PAMグループ</strong>: ユーザグループ</li>
+  <li><strong>Sudoer</strong>: sudo実行権限のルール</li>
+</ul>
+
+<h4>操作</h4>
+<ul>
+  <li><strong>新規作成</strong>: 新しいエントリを作成します</li>
+  <li><strong>編集</strong>: 選択したエントリの内容を変更します</li>
+  <li><strong>削除</strong>: エントリを削除します。削除後は元に戻せません</li>
+</ul>
+{% endblock %}
