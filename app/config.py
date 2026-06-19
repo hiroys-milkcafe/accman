@@ -1,6 +1,7 @@
 import configparser
 import os
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -8,7 +9,7 @@ class LdapConfig:
     host: str
     port: int
     tls: bool
-    ca_cert: str | None
+    ca_cert: Optional[str]
 
 
 @dataclass
@@ -47,11 +48,11 @@ class AppConfig:
     def templates_by_scope(self, scope: str) -> list[Template]:
         return [t for t in self.templates if t.scope == scope]
 
-    def get_template(self, template_id: str) -> Template | None:
+    def get_template(self, template_id: str) -> Optional[Template]:
         return next((t for t in self.templates if t.id == template_id), None)
 
 
-def load_config(path: str | None = None) -> AppConfig:
+def load_config(path: Optional[str] = None) -> AppConfig:
     config_path = path or os.environ.get('ACCMAN_CONFIG', 'config/accman.ini')
 
     parser = configparser.ConfigParser()

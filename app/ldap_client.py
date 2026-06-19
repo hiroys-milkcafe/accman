@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import os
+from typing import Optional
 
 from ldap3 import ALL, MODIFY_REPLACE, SUBTREE, Connection, Server
 from ldap3.core.exceptions import LDAPException
@@ -60,7 +61,7 @@ class LdapClient:
         finally:
             conn.unbind()
 
-    def get(self, dn: str, attrs: list[str]) -> dict | None:
+    def get(self, dn: str, attrs: list[str]) -> Optional[dict]:
         conn = self._connect()
         try:
             conn.search(dn, '(objectClass=*)', attributes=attrs)
@@ -78,7 +79,7 @@ class LdapClient:
             conn.unbind()
 
     def add(self, dn: str, object_classes: list[str], attrs: dict,
-            password_attrs: list[str] | None = None) -> None:
+            password_attrs: Optional[list[str]] = None) -> None:
         actual: dict = {}
         for attr, val in attrs.items():
             if attr in (password_attrs or []):
@@ -97,7 +98,7 @@ class LdapClient:
             conn.unbind()
 
     def modify(self, dn: str, changes: dict,
-               password_attrs: list[str] | None = None) -> None:
+               password_attrs: Optional[list[str]] = None) -> None:
         ldap_changes: dict = {}
         for attr, val in changes.items():
             if attr in (password_attrs or []):
