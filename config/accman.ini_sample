@@ -26,6 +26,13 @@ id = admin
 ; 管理者のBIND DN。パスワードは環境変数 ACCMAN_ADMIN_PASSWORD で渡す。
 bind_dn = cn=admin,dc=example,dc=com
 
+; ---- セッションタイムアウト設定 ----
+[session]
+; 管理者セッションのタイムアウト時間（秒）。例: 3600 = 1時間
+admin_timeout = 3600
+; 一般ユーザセッションのタイムアウト時間（秒）。例: 28800 = 8時間
+user_timeout = 28800
+
 ; ---- PAMアカウントのベースDN ----
 [pam]
 ; PAMユーザ・グループ・sudoer エントリを格納するOU

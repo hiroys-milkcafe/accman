@@ -190,6 +190,46 @@ tr:hover td { background: #f9f9f9; }
 /* ---- Inline form (logout, delete) ---- */
 .inline-form { display: inline; }
 
+/* ---- Hamburger menu ---- */
+.btn-hamburger {
+  background: none;
+  border: 1px solid rgba(255,255,255,.5);
+  color: #fff;
+  border-radius: 4px;
+  padding: 0.2rem 0.7rem;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+.btn-hamburger:hover { background: rgba(255,255,255,.15); }
+
+.hamburger-menu { position: relative; }
+.hamburger-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  min-width: 120px;
+  z-index: 400;
+}
+.hamburger-menu.open .hamburger-dropdown { display: block; }
+.hamburger-item {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+.hamburger-item:hover { background: #f5f5f5; }
+
 /* ---- Manual button (header) ---- */
 .btn-manual {
   background: none;

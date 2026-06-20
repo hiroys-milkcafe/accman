@@ -1,5 +1,6 @@
 import os
-from flask import Flask, session
+import time
+from flask import Flask, flash, redirect, session, url_for
 from flask_session import Session
 from .config import load_config
 
@@ -19,6 +20,24 @@ def create_app():
     app.config['ACCMAN'] = cfg
 
     Session(app)
+
+    _LOGIN_ENDPOINTS = {'auth.login', 'auth.admin_login', 'auth.logout', 'static'}
+
+    @app.before_request
+    def check_session_timeout():
+        from flask import request
+        if request.endpoint in _LOGIN_ENDPOINTS:
+            return
+        if 'bind_dn' not in session:
+            return
+        is_admin = session.get('is_admin', False)
+        timeout = cfg.session.admin_timeout if is_admin else cfg.session.user_timeout
+        last = session.get('last_activity')
+        if last is not None and time.time() - last > timeout:
+            session.clear()
+            flash('セッションがタイムアウトしました。再度ログインしてください。', 'error')
+            return redirect(url_for('auth.admin_login') if is_admin else url_for('auth.login'))
+        session['last_activity'] = time.time()
 
     @app.context_processor
     def inject_nav():

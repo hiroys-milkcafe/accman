@@ -18,11 +18,18 @@
         {% if mail_templates %}
         <a href="{{ url_for('mail.index') }}">メール管理</a>
         {% endif %}
-        <form action="{{ url_for('auth.logout') }}" method="post" class="inline-form">
-          <button type="submit" class="btn-link">ログアウト</button>
-        </form>
         {% endif %}
         <button type="button" class="btn-manual" onclick="openManual()">ヘルプ</button>
+        {% if session.bind_dn %}
+        <div class="hamburger-menu" id="hamburger-menu">
+          <button type="button" class="btn-hamburger" onclick="toggleHamburger(event)" aria-label="メニュー">&#9776;</button>
+          <div class="hamburger-dropdown">
+            <form action="{{ url_for('auth.logout') }}" method="post">
+              <button type="submit" class="hamburger-item">ログアウト</button>
+            </form>
+          </div>
+        </div>
+        {% endif %}
       </nav>
     </div>
   </header>
@@ -56,6 +63,14 @@
       document.getElementById('manual-drawer').classList.remove('open');
       document.body.classList.remove('manual-open');
     }
+    function toggleHamburger(e) {
+      e.stopPropagation();
+      document.getElementById('hamburger-menu').classList.toggle('open');
+    }
+    document.addEventListener('click', function() {
+      var m = document.getElementById('hamburger-menu');
+      if (m) m.classList.remove('open');
+    });
   </script>
 </body>
 </html>

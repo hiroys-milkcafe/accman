@@ -20,6 +20,12 @@ class AdminConfig:
 
 
 @dataclass
+class SessionConfig:
+    admin_timeout: int  # seconds
+    user_timeout: int   # seconds
+
+
+@dataclass
 class AttributeDef:
     attr: str
     label: str
@@ -42,6 +48,7 @@ class Template:
 class AppConfig:
     ldap: LdapConfig
     admin: AdminConfig
+    session: SessionConfig
     pam_base_dn: str
     mail_base_dn: str
     templates: list[Template]
@@ -76,6 +83,12 @@ def load_config(path: Optional[str] = None) -> AppConfig:
         id=parser['admin']['id'],
         bind_dn=parser['admin']['bind_dn'],
         password=admin_password,
+    )
+
+    session_sec = parser['session']
+    session_cfg = SessionConfig(
+        admin_timeout=int(session_sec['admin_timeout']),
+        user_timeout=int(session_sec['user_timeout']),
     )
 
     pam_base_dn = parser['pam']['base_dn']
@@ -125,6 +138,7 @@ def load_config(path: Optional[str] = None) -> AppConfig:
     return AppConfig(
         ldap=ldap,
         admin=admin,
+        session=session_cfg,
         pam_base_dn=pam_base_dn,
         mail_base_dn=mail_base_dn,
         templates=templates,
