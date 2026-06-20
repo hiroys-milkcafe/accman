@@ -55,6 +55,11 @@
       <label for="modal-pw-input">新しいパスワード</label>
       <input type="password" id="modal-pw-input">
     </div>
+    <div class="field">
+      <label for="modal-pw-confirm">新しいパスワード（確認）</label>
+      <input type="password" id="modal-pw-confirm">
+    </div>
+    <p id="modal-pw-error" class="field-error" style="display:none">パスワードが一致しません</p>
     <div class="form-actions">
       <button type="button" class="btn-primary" onclick="confirmPassword()">設定</button>
       <button type="button" class="btn-secondary" onclick="closePasswordModal()">キャンセル</button>
