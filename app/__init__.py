@@ -5,6 +5,7 @@ import time
 from flask import Flask, flash, redirect, session, url_for
 from flask_session import Session
 from .config import load_config
+from .ldap_client import CredentialExpiredError
 
 logger = logging.getLogger('accman')
 
@@ -69,6 +70,15 @@ def create_app():
                 'is_admin': session.get('is_admin', False),
             }
         return {'pam_templates': [], 'mail_templates': [], 'is_admin': False}
+
+    @app.errorhandler(CredentialExpiredError)
+    def handle_credential_expired(e):
+        is_admin = session.get('is_admin', False)
+        bind_dn = session.get('bind_dn', '-')
+        session.clear()
+        logger.warning('credential expired, session cleared: %s', bind_dn)
+        flash('認証情報が無効になりました。再度ログインしてください。', 'error')
+        return redirect(url_for('auth.admin_login') if is_admin else url_for('auth.login'))
 
     from .routes.auth import bp as auth_bp
     from .routes.pam import bp as pam_bp

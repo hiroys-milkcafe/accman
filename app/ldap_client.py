@@ -9,6 +9,10 @@ from ldap3.core.exceptions import LDAPException
 from .config import LdapConfig
 
 
+class CredentialExpiredError(Exception):
+    """LDAPのBINDがinvalidCredentialsで失敗したときに送出する。"""
+
+
 def _hash_ssha(plain: str) -> str:
     salt = os.urandom(4)
     digest = hashlib.sha1(plain.encode('utf-8') + salt).digest()
@@ -29,7 +33,12 @@ class LdapClient:
             get_info=ALL,
             tls=self._build_tls() if self._config.tls else None,
         )
-        conn = Connection(server, self._bind_dn, self._password, auto_bind=True)
+        try:
+            conn = Connection(server, self._bind_dn, self._password, auto_bind=True)
+        except LDAPException as e:
+            if 'invalidCredentials' in str(e):
+                raise CredentialExpiredError(str(e)) from e
+            raise
         return conn
 
     def _build_tls(self):

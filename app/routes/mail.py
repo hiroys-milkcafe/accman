@@ -6,6 +6,7 @@ from ldap3.core.exceptions import LDAPException
 
 from ..auth import get_ldap_client, login_required
 from ..config import AppConfig
+from ..ldap_client import CredentialExpiredError
 from .common import collect_form_attrs
 
 logger = logging.getLogger('accman')
@@ -33,6 +34,8 @@ def index():
     entries = []
     try:
         entries = get_ldap_client().search(current_tab.base_dn, '(objectClass=*)', attr_names)
+    except CredentialExpiredError:
+        raise
     except Exception as e:
         logger.warning('LDAP search failed: %s: %s', current_tab.base_dn, e)
         flash(str(e), 'error')
@@ -77,6 +80,8 @@ def new():
         get_ldap_client().add(dn, template.object_classes, attrs,
                               password_attrs=password_attrs)
         return redirect(url_for('mail.index', tab=template_id))
+    except CredentialExpiredError:
+        raise
     except (LDAPException, Exception) as e:
         logger.warning('LDAP add failed: %s: %s', dn, e)
         flash(str(e), 'error')
@@ -121,6 +126,8 @@ def edit():
     try:
         get_ldap_client().modify(dn, changes, password_attrs=password_attrs)
         return redirect(url_for('mail.index', tab=template_id))
+    except CredentialExpiredError:
+        raise
     except (LDAPException, Exception) as e:
         logger.warning('LDAP modify failed: %s: %s', dn, e)
         flash(str(e), 'error')
@@ -138,6 +145,8 @@ def delete():
         return redirect(url_for('mail.index'))
     try:
         get_ldap_client().delete(dn)
+    except CredentialExpiredError:
+        raise
     except (LDAPException, Exception) as e:
         logger.warning('LDAP delete failed: %s: %s', dn, e)
         flash(str(e), 'error')

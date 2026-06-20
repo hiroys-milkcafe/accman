@@ -10,13 +10,19 @@
 ### インターフェース
 
 ```python
+class CredentialExpiredError(Exception):
+    """LDAPのBINDがinvalidCredentialsで失敗したときに送出する。"""
+
 class LdapClient:
     def __init__(self, config: LdapConfig, bind_dn: str, password: str): ...
 
+    def bind_test(self) -> None: ...
     def search(self, base_dn: str, filter: str, attrs: list[str]) -> list[dict]: ...
     def get(self, dn: str, attrs: list[str]) -> dict | None: ...
-    def add(self, dn: str, object_classes: list[str], attrs: dict) -> None: ...
-    def modify(self, dn: str, changes: dict) -> None: ...
+    def add(self, dn: str, object_classes: list[str], attrs: dict,
+            password_attrs: list[str] | None = None) -> None: ...
+    def modify(self, dn: str, changes: dict,
+               password_attrs: list[str] | None = None) -> None: ...
     def delete(self, dn: str) -> None: ...
 ```
 
@@ -31,4 +37,6 @@ class LdapClient:
 
 ### エラー処理
 
-- BIND失敗・操作失敗（権限不足・エントリ不在等）は例外として上位層へ伝える
+- BIND時に `invalidCredentials` が返った場合は `CredentialExpiredError` を送出する
+- その他のBIND失敗・操作失敗（権限不足・エントリ不在等）は `LDAPException` として上位層へ伝える
+- `CredentialExpiredError` はアプリ全体の `@app.errorhandler` で補足し、セッション破棄・ログイン画面リダイレクトを行う（[認証・セッション設計](confirmed_auth.md) 参照）
