@@ -33,10 +33,9 @@ dnf install python3 python3-pip nginx
 ```sh
 # 任意のパスに配置する（以下は /opt/accman を使用する例）
 cp -r accman/ /opt/accman
-cd /opt/accman
 
-python3 -m venv venv
-venv/bin/pip install -r requirements.txt
+python3 -m venv /opt/venv
+/opt/venv/bin/pip install -r /opt/accman/requirements.txt
 ```
 
 ### 3. 設定ファイルの編集
@@ -184,7 +183,7 @@ Type=simple
 User=accman
 WorkingDirectory=/opt/accman
 EnvironmentFile=/etc/accman/env
-ExecStart=/opt/accman/venv/bin/python run.py
+ExecStart=/opt/venv/bin/python run.py
 Restart=on-failure
 
 [Install]
@@ -265,7 +264,7 @@ journalctl -u accman -f
 2. ソースを更新する（git pull または再配置）。
 3. 依存パッケージを更新する:
    ```sh
-   /opt/accman/venv/bin/pip install -r /opt/accman/requirements.txt
+   /opt/venv/bin/pip install -r /opt/accman/requirements.txt
    ```
 4. サービスを起動する:
    ```sh
@@ -294,6 +293,6 @@ cp -p /opt/accman/config/accman.ini /tmp/accman.ini.bak
 | `/opt/accman/config/accman.ini` | アプリ設定ファイル（`accman.ini_sample` をコピーして作成。git管理外） |
 | `/etc/accman/env` | 環境変数ファイル（パスワード・秘密鍵） |
 | `/var/lib/accman/sessions/` | セッションファイル保存ディレクトリ（`ACCMAN_SESSION_DIR` で指定） |
-| `/opt/accman/venv/` | Python仮想環境（再インストールで再作成） |
+| `/opt/venv/` | Python仮想環境（再インストールで再作成） |
 | `/etc/nginx/conf.d/accman.conf` | NGINXの設定ファイル |
 | `/etc/systemd/system/accman.service` | systemdサービスユニット |
