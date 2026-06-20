@@ -37,7 +37,7 @@
 ```
 accman/
 ├── config/
-│   └── accman.ini
+│   └── accman.ini_sample   # git管理。コピーして accman.ini を作成する（accman.ini は gitignore）
 ├── app/
 │   ├── __init__.py
 │   ├── config.py

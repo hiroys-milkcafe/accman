@@ -41,7 +41,13 @@ venv/bin/pip install -r requirements.txt
 
 ### 3. 設定ファイルの編集
 
-`config/accman.ini` を環境に合わせて編集する。
+`config/accman.ini_sample` をコピーして `config/accman.ini` を作成し、環境に合わせて編集する。
+
+```sh
+cp config/accman.ini_sample config/accman.ini
+```
+
+`config/accman.ini` は git 管理外（`.gitignore` で除外済み）のため、`git pull` やアーカイブの上書き展開で既存の設定が失われることはない。`config/accman.ini_sample` が設定項目を追加した場合は差分を手動で `config/accman.ini` へ反映すること。
 
 ```ini
 [ldap]
@@ -283,7 +289,8 @@ cp -p /opt/accman/config/accman.ini /tmp/accman.ini.bak
 
 | パス | 説明 |
 |------|------|
-| `/opt/accman/config/accman.ini` | アプリ設定ファイル（LDAP接続先・テンプレート定義） |
+| `/opt/accman/config/accman.ini_sample` | 設定ファイルのサンプル（git管理。直接は使用しない） |
+| `/opt/accman/config/accman.ini` | アプリ設定ファイル（`accman.ini_sample` をコピーして作成。git管理外） |
 | `/etc/accman/env` | 環境変数ファイル（パスワード・秘密鍵） |
 | `/var/lib/accman/sessions/` | セッションファイル保存ディレクトリ（`ACCMAN_SESSION_DIR` で指定） |
 | `/opt/accman/venv/` | Python仮想環境（再インストールで再作成） |

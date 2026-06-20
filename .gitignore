@@ -1,3 +1,6 @@
+# 設定ファイル（accman.ini_sample をコピーして作成する。パスワード等を含むためgit管理外）
+config/accman.ini
+
 # Python
 __pycache__/
 *.pyc
