@@ -155,7 +155,7 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 ```sh
 # セッション保存ディレクトリを作成する例
 mkdir -p /var/lib/accman/sessions
-chown www-data:www-data /var/lib/accman/sessions
+chown accman:accman /var/lib/accman/sessions
 chmod 700 /var/lib/accman/sessions
 ```
 
@@ -181,7 +181,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
+User=accman
 WorkingDirectory=/opt/accman
 EnvironmentFile=/etc/accman/env
 ExecStart=/opt/accman/venv/bin/python run.py
