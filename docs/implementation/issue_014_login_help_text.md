@@ -1,6 +1,6 @@
 # issue_014: login.html の管理者ログイン説明文が誤り
 
-## 状態（Open）
+## 状態（Closed）
 
 ## 問題
 
