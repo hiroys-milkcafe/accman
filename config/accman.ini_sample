@@ -94,7 +94,7 @@ mail_user = ou=mail,dc=example,dc=com
 [template:pam_user]
 name = PAMユーザ
 scope = pam
-; DNは uid=<ユーザID値>,<pam.base_dn> の形式で生成される
+; DNは uid=<ユーザID値>,<[pam] pam_user の値> の形式で生成される
 rdn_attr = uid
 object_classes = posixAccount, shadowAccount
 
@@ -152,7 +152,7 @@ type = text
 [template:pam_group]
 name = PAMグループ
 scope = pam
-; DNは cn=<グループ名>,<pam.base_dn> の形式で生成される
+; DNは cn=<グループ名>,<[pam] pam_group の値> の形式で生成される
 rdn_attr = cn
 object_classes = posixGroup
 
@@ -182,7 +182,7 @@ type = text
 [template:sudoer]
 name = Sudoer
 scope = pam
-; DNは cn=<ルール名>,<pam.base_dn> の形式で生成される
+; DNは cn=<ルール名>,<[pam] sudoer の値> の形式で生成される
 rdn_attr = cn
 object_classes = sudoRole
 
@@ -226,7 +226,7 @@ type = text
 [template:mail_user]
 name = メールユーザ
 scope = mail
-; DNは uid=<アカウントID>,<mail.base_dn> の形式で生成される
+; DNは uid=<アカウントID>,<[mail] mail_user の値> の形式で生成される
 rdn_attr = uid
 object_classes = inetOrgPerson
 

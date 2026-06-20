@@ -1,28 +1,13 @@
 # issue_011: 一般ユーザログインが失敗する
 
-## 状況
+## 状態（Closed）
 
-一般ユーザ（`/login`）でログインを試みると失敗する。エラーの詳細は未確認。
+一般ユーザのログインおよびログアウトを確認済み。
 
-## 調査事項
+## 原因と解決
 
-以下の順で原因を切り分ける。
-
-1. **エラーログの確認**（最初にここを見る）  
-   `journalctl -u accman -f` でログイン失敗時のログを確認する。  
-   ログ出力が実装されたため、`login failed: uid=...,... from ...: <LDAPエラー内容>` が出力される。
-
-2. **BIND DN の組み立て確認**  
-   `app/routes/auth.py` でBIND DNを `uid={uid},{pam_base_dn}` の形式で組み立てている。  
-   `pam.base_dn` の値（`config/accman.ini` の `[pam]` セクション）が正しいか確認する。
-
-3. **LDAPサーバへの疎通確認**  
-   アプリからLDAPサーバへ接続できているか（ポート・TLS設定の確認）
-
-4. **LDAPサーバ側のACL確認**  
-   一般ユーザのSELF BINDがLDAPサーバのACLで許可されているか確認する。
+ログに `login failed: uid=dang,cn=accounts,dc=qv,dc=jp ... invalidCredentials` が出力されていた。原因は本番環境の `config/accman.ini` で `[pam] base_dn` に `cn=accounts,dc=qv,dc=jp` を設定していたこと。実際のユーザDNは `uid=dang,cn=users,cn=accounts,dc=qv,dc=jp` であるため、`[pam] base_dn = cn=users,cn=accounts,dc=qv,dc=jp` へ修正することで解決。
 
 ## 影響範囲
 
-- `app/routes/auth.py`（ログイン処理・エラーハンドリング）
-- `config/accman.ini`（`[ldap]`・`[pam]` セクション）
+- `config/accman.ini`（`[pam] base_dn` の値を本番LDAPツリー構造に合わせて設定する）
