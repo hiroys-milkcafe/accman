@@ -51,6 +51,7 @@ main {
 }
 .flash-error   { background: #fde8e8; border-color: #e53e3e; color: #c53030; }
 .flash-success { background: #e6f4ea; border-color: #38a169; color: #276749; }
+.field-error   { color: #c53030; font-size: 0.85rem; margin-top: 0.25rem; }
 
 /* ---- Buttons ---- */
 .btn-primary {

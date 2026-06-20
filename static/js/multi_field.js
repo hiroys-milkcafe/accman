@@ -24,6 +24,8 @@ function openPasswordModal(attrName, label) {
   _pwAttr = attrName;
   document.getElementById('modal-pw-title').textContent = label + 'の変更';
   document.getElementById('modal-pw-input').value = '';
+  document.getElementById('modal-pw-confirm').value = '';
+  document.getElementById('modal-pw-error').style.display = 'none';
   document.getElementById('password-modal').style.display = 'flex';
   document.getElementById('modal-pw-input').focus();
 }
@@ -35,7 +37,15 @@ function closePasswordModal() {
 
 function confirmPassword() {
   var pw = document.getElementById('modal-pw-input').value;
+  var pw2 = document.getElementById('modal-pw-confirm').value;
+  var errEl = document.getElementById('modal-pw-error');
   if (!pw) return;
+  if (pw !== pw2) {
+    errEl.style.display = 'block';
+    document.getElementById('modal-pw-confirm').focus();
+    return;
+  }
+  errEl.style.display = 'none';
   document.getElementById('hidden-pw-' + _pwAttr).value = pw;
   document.getElementById('pw-badge-' + _pwAttr).style.display = 'inline';
   closePasswordModal();

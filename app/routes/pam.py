@@ -1,7 +1,7 @@
 import logging
 
 from flask import (Blueprint, current_app, flash, redirect, render_template,
-                   request, url_for)
+                   request, session, url_for)
 from ldap3.core.exceptions import LDAPException
 
 from ..auth import get_ldap_client, login_required
@@ -13,10 +13,29 @@ logger = logging.getLogger('accman')
 bp = Blueprint('pam', __name__)
 
 
+def _redirect_user_to_own_entry(cfg: AppConfig):
+    """一般ユーザを自分のLDAPエントリ編集画面へリダイレクトする。"""
+    bind_dn = session.get('bind_dn', '')
+    if ',' in bind_dn:
+        rdn, parent_dn = bind_dn.split(',', 1)
+        if '=' in rdn:
+            rdn_attr, _ = rdn.split('=', 1)
+            for tmpl in cfg.templates_by_scope('pam'):
+                if (tmpl.rdn_attr == rdn_attr
+                        and tmpl.base_dn.lower() == parent_dn.lower()):
+                    return redirect(url_for('pam.edit', dn=bind_dn, template=tmpl.id))
+    flash('PAMエントリが見つかりません', 'error')
+    return redirect(url_for('auth.index'))
+
+
 @bp.route('/')
 @login_required
 def index():
     cfg: AppConfig = current_app.config['ACCMAN']
+
+    if not session.get('is_admin'):
+        return _redirect_user_to_own_entry(cfg)
+
     templates = cfg.templates_by_scope('pam')
     if not templates:
         return render_template('pam/index.html', templates=[], current_tab=None,
@@ -46,6 +65,9 @@ def index():
 @login_required
 def new():
     cfg: AppConfig = current_app.config['ACCMAN']
+
+    if not session.get('is_admin'):
+        return _redirect_user_to_own_entry(cfg)
 
     if request.method == 'GET':
         template_id = request.args.get('template')
