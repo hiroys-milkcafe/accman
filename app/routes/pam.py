@@ -161,6 +161,10 @@ def edit():
 @bp.route('/delete', methods=['POST'])
 @login_required
 def delete():
+    if not session.get('is_admin'):
+        flash('この操作は管理者のみが実行できます', 'error')
+        return redirect(url_for('auth.index'))
+
     dn = request.form.get('dn', '')
     tab = request.form.get('tab', '')
     if not dn:
