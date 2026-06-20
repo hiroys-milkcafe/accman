@@ -5,7 +5,8 @@
 ### ログインフロー（一般ユーザ） `/login`
 
 1. uid＋パスワードを入力
-2. `uid={uid},{pam_base_dn}` を組み立ててLDAP BIND
+2. `uid={uid},{pam_base_dn}` を組み立ててLDAP BIND  
+   ※ `pam_base_dn` は `[pam] base_dn`。テンプレートごとのエントリ格納先（`[pam] pam_user` 等）とは別に、ログイン専用として存在する（[設定ローダー設計](confirmed_config.md) 参照）
 3. 成功 → 一般ユーザセッション生成
 4. 失敗 → エラーメッセージ表示、ログイン画面に戻る
 

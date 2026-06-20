@@ -45,6 +45,7 @@ class Template:
     id: str
     name: str
     scope: str  # pam | mail
+    base_dn: str
     rdn_attr: str
     object_classes: list[str]
     attributes: list[AttributeDef]
@@ -56,8 +57,7 @@ class AppConfig:
     admin: AdminConfig
     session: SessionConfig
     log: LogConfig
-    pam_base_dn: str
-    mail_base_dn: str
+    pam_base_dn: str  # 一般ユーザログインのBIND DN組み立て用
     templates: list[Template]
 
     def templates_by_scope(self, scope: str) -> list[Template]:
@@ -104,7 +104,6 @@ def load_config(path: Optional[str] = None) -> AppConfig:
     )
 
     pam_base_dn = parser['pam']['base_dn']
-    mail_base_dn = parser['mail']['base_dn']
 
     # テンプレートIDを出現順に収集
     template_ids: list[str] = []
@@ -134,10 +133,19 @@ def load_config(path: Optional[str] = None) -> AppConfig:
                     type=a.get('type', 'text'),
                 ))
 
+        scope = meta['scope']
+        scope_section = parser[scope] if scope in parser else {}
+        template_base_dn = scope_section.get(tid)
+        if not template_base_dn:
+            raise RuntimeError(
+                f'テンプレート "{tid}" の base_dn が [{scope}] セクションに設定されていません'
+            )
+
         templates.append(Template(
             id=tid,
             name=meta['name'],
-            scope=meta['scope'],
+            scope=scope,
+            base_dn=template_base_dn,
             rdn_attr=meta['rdn_attr'],
             object_classes=object_classes,
             attributes=attributes,
@@ -153,6 +161,5 @@ def load_config(path: Optional[str] = None) -> AppConfig:
         session=session_cfg,
         log=log_cfg,
         pam_base_dn=pam_base_dn,
-        mail_base_dn=mail_base_dn,
         templates=templates,
     )

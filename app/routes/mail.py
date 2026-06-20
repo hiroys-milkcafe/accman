@@ -32,9 +32,9 @@ def index():
 
     entries = []
     try:
-        entries = get_ldap_client().search(cfg.mail_base_dn, '(objectClass=*)', attr_names)
+        entries = get_ldap_client().search(current_tab.base_dn, '(objectClass=*)', attr_names)
     except Exception as e:
-        logger.warning('LDAP search failed: %s: %s', cfg.mail_base_dn, e)
+        logger.warning('LDAP search failed: %s: %s', current_tab.base_dn, e)
         flash(str(e), 'error')
 
     return render_template('mail/index.html', templates=templates,
@@ -72,7 +72,7 @@ def new():
         flash(f'{template.rdn_attr} は必須です', 'error')
         return render_template('mail/new.html', template=template)
 
-    dn = f'{template.rdn_attr}={rdn_val},{cfg.mail_base_dn}'
+    dn = f'{template.rdn_attr}={rdn_val},{template.base_dn}'
     try:
         get_ldap_client().add(dn, template.object_classes, attrs,
                               password_attrs=password_attrs)

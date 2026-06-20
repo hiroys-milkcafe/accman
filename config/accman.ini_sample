@@ -40,15 +40,22 @@ admin_timeout = 3600
 ; 一般ユーザセッションのタイムアウト時間（秒）。例: 28800 = 8時間
 user_timeout = 28800
 
-; ---- PAMアカウントのベースDN ----
+; ---- PAMアカウント設定 ----
 [pam]
-; PAMユーザ・グループ・sudoer エントリを格納するOU
+; 一般ユーザログインのBIND DN組み立てに使用するベースDN
 base_dn = ou=people,dc=example,dc=com
+; テンプレートごとのエントリ格納先（テンプレートIDをキーに指定）
+pam_user = ou=people,dc=example,dc=com
+pam_group = ou=groups,dc=example,dc=com
+sudoer = ou=sudoers,dc=example,dc=com
 
-; ---- メールアカウントのベースDN ----
+; ---- メールアカウント設定 ----
 [mail]
-; メールアカウントエントリを格納するOU
-base_dn = ou=mail,dc=example,dc=com
+; テンプレートごとのエントリ格納先（テンプレートIDをキーに指定）
+; ※ [pam] と異なり base_dn キーは存在しない。
+;   メールアカウントへの直接ログインはこのアプリが扱わないため、
+;   BIND DN 組み立て用のグローバルな格納先が不要なため。
+mail_user = ou=mail,dc=example,dc=com
 
 
 ; ============================================================

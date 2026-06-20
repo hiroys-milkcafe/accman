@@ -68,10 +68,13 @@ tls = true                 # true / false
 bind_dn = cn=admin,dc=example,dc=com  # 管理者のBIND DN
 
 [pam]
-base_dn = ou=people,dc=example,dc=com  # PAMアカウントのベースDN
+base_dn = ou=people,dc=example,dc=com  # 一般ユーザログインのBIND DN組み立て用
+pam_user = ou=people,dc=example,dc=com # テンプレートIDをキーにしたエントリ格納先
+pam_group = ou=groups,dc=example,dc=com
+sudoer = ou=sudoers,dc=example,dc=com
 
 [mail]
-base_dn = ou=mail,dc=example,dc=com    # メールアカウントのベースDN
+mail_user = ou=mail,dc=example,dc=com  # テンプレートIDをキーにしたエントリ格納先
 ```
 
 #### テンプレートセクション
