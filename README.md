@@ -60,16 +60,70 @@ base_dn = ou=people,dc=example,dc=com  # PAMアカウントのベースDN
 base_dn = ou=mail,dc=example,dc=com    # メールアカウントのベースDN
 ```
 
-テンプレートセクション（`[template:*]`）は環境のLDAPスキーマに合わせて追加・変更する。
-サンプルとして `pam_user` / `pam_group` / `sudoer` / `mail_user` が同梱されている。
+#### テンプレートセクション
 
-#### テンプレート属性の `type` 値
+テンプレートは「エントリの種別（PAMユーザ・グループ・メールユーザ等）」を定義する設定ブロック。UIのタブ・フォーム項目・一覧カラムがこの定義に従って自動生成される。サンプルとして `pam_user` / `pam_group` / `sudoer` / `mail_user` が同梱されている。環境のLDAPスキーマに合わせて追加・変更する。
+
+**セクション構造**
+
+```
+[template:<テンプレートID>]           ← テンプレートのヘッダー（1個）
+[template:<テンプレートID>:<属性名>]   ← 属性定義（属性の数だけ記載）
+```
+
+テンプレートIDは英数字・アンダースコアで任意に命名する（例: `pam_user`）。ファイル内の記載順がUIの表示順になる。
+
+**テンプレートヘッダーのキー**
+
+| キー | 説明 | 値の例 |
+|------|------|--------|
+| `name` | 画面に表示するテンプレート名 | `PAMユーザ` |
+| `scope` | 表示先のメニュー | `pam` または `mail` |
+| `rdn_attr` | エントリDN生成に使うLDAP属性名 | `uid` |
+| `object_classes` | 付与するobjectClass（カンマ区切り） | `posixAccount, shadowAccount` |
+
+`rdn_attr` を `uid`、`pam.base_dn` を `ou=people,dc=example,dc=com` とした場合、新規エントリのDNは `uid=<入力値>,ou=people,dc=example,dc=com` になる。
+
+**テンプレート属性のキー**
+
+| キー | 説明 | 値 |
+|------|------|----|
+| `label` | フォームのラベル（日本語可） | 任意の文字列 |
+| `required` | 必須入力かどうか | `true` / `false` |
+| `multi` | 複数値を入力できるかどうか | `true` / `false` |
+| `type` | 入力欄の種類 | `text` / `password` / `number` |
+
+`required = false`（任意項目）を空欄で保存すると、その属性がLDAPエントリから削除される。
+
+**`type` の値**
 
 | type | 説明 |
 |------|------|
 | `text` | テキスト入力 |
 | `password` | マスク表示。保存時はSSHAでハッシュ化してLDAPに書き込む |
 | `number` | 数値入力 |
+
+**テンプレート追加例（カスタムスキーマ）**
+
+```ini
+[template:my_type]
+name = カスタムエントリ
+scope = pam
+rdn_attr = cn
+object_classes = myObjectClass
+
+[template:my_type:cn]
+label = エントリ名
+required = true
+multi = false
+type = text
+
+[template:my_type:description]
+label = 説明
+required = false
+multi = false
+type = text
+```
 
 ### 4. 環境変数の設定
 
