@@ -1,8 +1,26 @@
+import logging
+import logging.handlers
 import os
 import time
 from flask import Flask, flash, redirect, session, url_for
 from flask_session import Session
 from .config import load_config
+
+logger = logging.getLogger('accman')
+
+
+def _setup_syslog(cfg) -> None:
+    if not cfg.log.syslog_enabled:
+        return
+    facility = logging.handlers.SysLogHandler.facility_names.get(
+        cfg.log.syslog_facility.lower(),
+        logging.handlers.SysLogHandler.LOG_LOCAL3,
+    )
+    handler = logging.handlers.SysLogHandler(address='/dev/log', facility=facility)
+    handler.ident = 'accman: '
+    handler.setFormatter(logging.Formatter('%(levelname)s %(message)s'))
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
 
 
 def create_app():
@@ -18,6 +36,7 @@ def create_app():
 
     cfg = load_config()
     app.config['ACCMAN'] = cfg
+    _setup_syslog(cfg)
 
     Session(app)
 
@@ -34,7 +53,9 @@ def create_app():
         timeout = cfg.session.admin_timeout if is_admin else cfg.session.user_timeout
         last = session.get('last_activity')
         if last is not None and time.time() - last > timeout:
+            bind_dn = session.get('bind_dn', '-')
             session.clear()
+            logger.info('session timeout: %s', bind_dn)
             flash('セッションがタイムアウトしました。再度ログインしてください。', 'error')
             return redirect(url_for('auth.admin_login') if is_admin else url_for('auth.login'))
         session['last_activity'] = time.time()

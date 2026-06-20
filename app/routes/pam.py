@@ -1,3 +1,5 @@
+import logging
+
 from flask import (Blueprint, current_app, flash, redirect, render_template,
                    request, url_for)
 from ldap3.core.exceptions import LDAPException
@@ -5,6 +7,8 @@ from ldap3.core.exceptions import LDAPException
 from ..auth import get_ldap_client, login_required
 from ..config import AppConfig
 from .common import collect_form_attrs
+
+logger = logging.getLogger('accman')
 
 bp = Blueprint('pam', __name__)
 
@@ -30,6 +34,7 @@ def index():
     try:
         entries = get_ldap_client().search(cfg.pam_base_dn, '(objectClass=*)', attr_names)
     except Exception as e:
+        logger.warning('LDAP search failed: %s: %s', cfg.pam_base_dn, e)
         flash(str(e), 'error')
 
     return render_template('pam/index.html', templates=templates,
@@ -73,6 +78,7 @@ def new():
                               password_attrs=password_attrs)
         return redirect(url_for('pam.index', tab=template_id))
     except (LDAPException, Exception) as e:
+        logger.warning('LDAP add failed: %s: %s', dn, e)
         flash(str(e), 'error')
         return render_template('pam/new.html', template=template)
 
@@ -116,6 +122,7 @@ def edit():
         get_ldap_client().modify(dn, changes, password_attrs=password_attrs)
         return redirect(url_for('pam.index', tab=template_id))
     except (LDAPException, Exception) as e:
+        logger.warning('LDAP modify failed: %s: %s', dn, e)
         flash(str(e), 'error')
         attr_names = [a.attr for a in template.attributes if a.type != 'password']
         entry = get_ldap_client().get(dn, attr_names) or {'dn': dn}
@@ -132,6 +139,7 @@ def delete():
     try:
         get_ldap_client().delete(dn)
     except (LDAPException, Exception) as e:
+        logger.warning('LDAP delete failed: %s: %s', dn, e)
         flash(str(e), 'error')
     return redirect(url_for('pam.index', tab=tab))
 

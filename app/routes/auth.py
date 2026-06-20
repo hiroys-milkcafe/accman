@@ -1,9 +1,13 @@
+import logging
+
 from flask import (Blueprint, current_app, flash, redirect, render_template,
                    request, session, url_for)
 from ldap3.core.exceptions import LDAPException
 
 from ..config import AppConfig
 from ..ldap_client import LdapClient
+
+logger = logging.getLogger('accman')
 
 bp = Blueprint('auth', __name__)
 
@@ -22,14 +26,17 @@ def login():
         password = request.form.get('password', '')
         cfg: AppConfig = current_app.config['ACCMAN']
         bind_dn = f'uid={uid},{cfg.pam_base_dn}'
+        client_ip = request.headers.get('X-Real-IP', request.remote_addr)
         try:
             LdapClient(cfg.ldap, bind_dn, password).bind_test()
             session.clear()
             session['bind_dn'] = bind_dn
             session['password'] = password
             session['is_admin'] = False
+            logger.info('login success: %s from %s', bind_dn, client_ip)
             return redirect(url_for('auth.index'))
-        except (LDAPException, Exception):
+        except (LDAPException, Exception) as e:
+            logger.warning('login failed: %s from %s: %s', bind_dn, client_ip, e)
             flash('ログインに失敗しました', 'error')
     return render_template('login.html')
 
@@ -40,7 +47,9 @@ def admin_login():
         uid = request.form.get('uid', '').strip()
         password = request.form.get('password', '')
         cfg: AppConfig = current_app.config['ACCMAN']
+        client_ip = request.headers.get('X-Real-IP', request.remote_addr)
         if uid != cfg.admin.id:
+            logger.warning('admin login failed: invalid admin id from %s', client_ip)
             flash('ログインに失敗しました', 'error')
             return render_template('admin/login.html')
         try:
@@ -49,8 +58,10 @@ def admin_login():
             session['bind_dn'] = cfg.admin.bind_dn
             session['password'] = password
             session['is_admin'] = True
+            logger.info('admin login success: %s from %s', cfg.admin.bind_dn, client_ip)
             return redirect(url_for('auth.index'))
-        except (LDAPException, Exception):
+        except (LDAPException, Exception) as e:
+            logger.warning('admin login failed: %s from %s: %s', cfg.admin.bind_dn, client_ip, e)
             flash('ログインに失敗しました', 'error')
     return render_template('admin/login.html')
 

@@ -26,6 +26,12 @@ class SessionConfig:
 
 
 @dataclass
+class LogConfig:
+    syslog_enabled: bool
+    syslog_facility: str  # e.g. 'local3'
+
+
+@dataclass
 class AttributeDef:
     attr: str
     label: str
@@ -49,6 +55,7 @@ class AppConfig:
     ldap: LdapConfig
     admin: AdminConfig
     session: SessionConfig
+    log: LogConfig
     pam_base_dn: str
     mail_base_dn: str
     templates: list[Template]
@@ -89,6 +96,11 @@ def load_config(path: Optional[str] = None) -> AppConfig:
     session_cfg = SessionConfig(
         admin_timeout=int(session_sec['admin_timeout']),
         user_timeout=int(session_sec['user_timeout']),
+    )
+
+    log_cfg = LogConfig(
+        syslog_enabled=parser.getboolean('log', 'syslog_enabled', fallback=False),
+        syslog_facility=parser.get('log', 'syslog_facility', fallback='local3'),
     )
 
     pam_base_dn = parser['pam']['base_dn']
@@ -139,6 +151,7 @@ def load_config(path: Optional[str] = None) -> AppConfig:
         ldap=ldap,
         admin=admin,
         session=session_cfg,
+        log=log_cfg,
         pam_base_dn=pam_base_dn,
         mail_base_dn=mail_base_dn,
         templates=templates,

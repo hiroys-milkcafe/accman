@@ -26,6 +26,13 @@ id = admin
 ; 管理者のBIND DN。パスワードは環境変数 ACCMAN_ADMIN_PASSWORD で渡す。
 bind_dn = cn=admin,dc=example,dc=com
 
+; ---- ログ設定 ----
+[log]
+; syslogへの出力を有効化する（true/false）。journalへの出力はこの設定に関わらず継続する。
+syslog_enabled = false
+; syslogのfacility（local0〜local7、daemon、user等）
+syslog_facility = local3
+
 ; ---- セッションタイムアウト設定 ----
 [session]
 ; 管理者セッションのタイムアウト時間（秒）。例: 3600 = 1時間
