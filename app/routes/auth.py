@@ -37,8 +37,12 @@ def login():
 @bp.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
+        uid = request.form.get('uid', '').strip()
         password = request.form.get('password', '')
         cfg: AppConfig = current_app.config['ACCMAN']
+        if uid != cfg.admin.id:
+            flash('ログインに失敗しました', 'error')
+            return render_template('admin/login.html')
         try:
             LdapClient(cfg.ldap, cfg.admin.bind_dn, password).bind_test()
             session.clear()

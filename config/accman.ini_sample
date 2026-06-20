@@ -21,6 +21,8 @@ tls = true
 
 ; ---- 管理者（RootDN）設定 ----
 [admin]
+; 管理者ログイン画面で入力するID。BIND DNとは独立して照合する。
+id = admin
 ; 管理者のBIND DN。パスワードは環境変数 ACCMAN_ADMIN_PASSWORD で渡す。
 bind_dn = cn=admin,dc=example,dc=com
 

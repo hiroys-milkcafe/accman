@@ -16,3 +16,7 @@
 - `app/routes/mail.py`
 - `templates/pam/edit.html`
 - `templates/mail/edit.html`
+
+## 決定（クローズ）
+
+修正方針通りに実装済み。

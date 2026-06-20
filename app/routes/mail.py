@@ -4,6 +4,7 @@ from ldap3.core.exceptions import LDAPException
 
 from ..auth import get_ldap_client, login_required
 from ..config import AppConfig
+from .common import collect_form_attrs
 
 bp = Blueprint('mail', __name__)
 
@@ -53,7 +54,7 @@ def new():
     if not template or template.scope != 'mail':
         return redirect(url_for('mail.index'))
 
-    attrs, password_attrs, errors = _collect_form_attrs(template)
+    attrs, password_attrs, errors = collect_form_attrs(template)
     for err in errors:
         flash(err, 'error')
     if errors:
@@ -102,7 +103,7 @@ def edit():
     if not template or template.scope != 'mail' or not dn:
         return redirect(url_for('mail.index'))
 
-    changes, password_attrs, errors = _collect_form_attrs(template, is_edit=True)
+    changes, password_attrs, errors = collect_form_attrs(template, is_edit=True)
     for err in errors:
         flash(err, 'error')
     if errors:
@@ -110,6 +111,7 @@ def edit():
         entry = get_ldap_client().get(dn, attr_names) or {'dn': dn}
         return render_template('mail/edit.html', template=template, entry=entry, dn=dn)
 
+    changes.pop(template.rdn_attr, None)
     try:
         get_ldap_client().modify(dn, changes, password_attrs=password_attrs)
         return redirect(url_for('mail.index', tab=template_id))
@@ -134,30 +136,3 @@ def delete():
     return redirect(url_for('mail.index', tab=tab))
 
 
-def _collect_form_attrs(template, is_edit: bool = False) -> tuple[dict, list[str], list[str]]:
-    attrs: dict = {}
-    password_attrs: list[str] = []
-    errors: list[str] = []
-    for attr_def in template.attributes:
-        if attr_def.type == 'password':
-            password_attrs.append(attr_def.attr)
-            val = request.form.get(attr_def.attr, '')
-            if val:
-                attrs[attr_def.attr] = val
-        elif attr_def.multi:
-            vals = [v for v in request.form.getlist(attr_def.attr) if v]
-            if vals:
-                attrs[attr_def.attr] = vals
-            elif attr_def.required:
-                errors.append(f'{attr_def.label} は必須です')
-            elif is_edit:
-                attrs[attr_def.attr] = []
-        else:
-            val = request.form.get(attr_def.attr, '')
-            if val:
-                attrs[attr_def.attr] = val
-            elif attr_def.required:
-                errors.append(f'{attr_def.label} は必須です')
-            elif is_edit:
-                attrs[attr_def.attr] = []
-    return attrs, password_attrs, errors

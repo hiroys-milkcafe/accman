@@ -5,8 +5,12 @@
   <h2>管理者ログイン</h2>
   <form method="post" action="{{ url_for('auth.admin_login') }}">
     <div class="field">
+      <label for="uid">管理者ID</label>
+      <input type="text" id="uid" name="uid" required autofocus autocomplete="username">
+    </div>
+    <div class="field">
       <label for="password">パスワード</label>
-      <input type="password" id="password" name="password" required autofocus>
+      <input type="password" id="password" name="password" required autocomplete="current-password">
     </div>
     <div class="field">
       <button type="submit" class="btn-primary">ログイン</button>
@@ -18,9 +22,10 @@
 
 {% block manual %}
 <h4>管理者ログイン</h4>
-<p>管理者（RootDN）のパスワードを入力してログインします。ユーザIDの入力は不要です。</p>
+<p>管理者IDとパスワードを入力してログインします。</p>
 <ul>
-  <li><strong>パスワード</strong>: 管理者のパスワード</li>
+  <li><strong>管理者ID</strong>: 設定ファイルの <code>admin.id</code> に設定した値</li>
+  <li><strong>パスワード</strong>: 管理者（RootDN）のパスワード</li>
 </ul>
 <p>ログインに成功するとメニュー画面に遷移します。管理者としてログインすると、すべてのPAMアカウント・メールアカウントの管理が可能になります。</p>
 

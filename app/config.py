@@ -14,6 +14,7 @@ class LdapConfig:
 
 @dataclass
 class AdminConfig:
+    id: str
     bind_dn: str
     password: str
 
@@ -72,6 +73,7 @@ def load_config(path: Optional[str] = None) -> AppConfig:
         raise RuntimeError('環境変数 ACCMAN_ADMIN_PASSWORD が設定されていません')
 
     admin = AdminConfig(
+        id=parser['admin']['id'],
         bind_dn=parser['admin']['bind_dn'],
         password=admin_password,
     )

@@ -34,8 +34,9 @@
     {% else %}
     <input type="{{ 'number' if attr_def.type == 'number' else 'text' }}"
            name="{{ attr_def.attr }}"
-           value="{{ entry.get(attr_def.attr, [''])[0] }}"
-           {% if attr_def.required %}required{% endif %}>
+           value="{{ (entry.get(attr_def.attr) or [''])[0] }}"
+           {% if attr_def.required %}required{% endif %}
+           {% if attr_def.attr == template.rdn_attr %}readonly{% endif %}>
     {% endif %}
   </div>
   {% endfor %}

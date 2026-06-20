@@ -7,3 +7,7 @@
 ## 修正方針
 
 共通関数として `app/routes/common.py`（または `app/form_utils.py`）などに切り出し、両ファイルからインポートする。
+
+## 決定（クローズ）
+
+`app/routes/common.py` に `collect_form_attrs` として切り出し、`pam.py` / `mail.py` 双方からインポートするよう修正済み。

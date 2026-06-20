@@ -178,6 +178,16 @@ systemctl reload nginx
 `nginx/accman.conf` のデフォルト設定は HTTP（ポート80）、静的ファイルは `/opt/accman/static/` を直接配信する。
 別のパスに配置した場合や HTTPS を使う場合は `accman.conf` を適宜編集する。
 
+バックエンド停止時（502 等）はアプリの `static/50x.html` を返す設定が含まれている。カスタムエラーページを別パスに置く場合は `accman.conf` の以下の箇所を編集する:
+
+```nginx
+error_page 500 502 503 504 /50x.html;
+location = /50x.html {
+    root /opt/accman/static;
+    internal;
+}
+```
+
 ### 6. systemd サービスの設定
 
 `/etc/systemd/system/accman.service` を作成する:
@@ -230,7 +240,7 @@ systemctl status accman
 
 | 種別 | ログインURL | 入力項目 | BIND方法 |
 |------|-------------|---------|---------|
-| 管理者 | `/admin/login` | パスワードのみ | 設定ファイルの `admin.bind_dn` ＋ 入力パスワードでBIND |
+| 管理者 | `/admin/login` | ID ＋ パスワード | 入力IDを `admin.id` と照合後、設定ファイルの `admin.bind_dn` ＋ 入力パスワードでBIND |
 | 一般ユーザ | `/login` | uid ＋ パスワード | `uid={uid},{pam_base_dn}` を組み立ててBIND |
 
 管理者の bind_dn は設定ファイルに記載するため、管理者ログイン画面での uid 入力は不要。

@@ -27,3 +27,9 @@
 - `docs/design/confirmed_auth.md`
 - `app/routes/auth.py`
 - `templates/admin/login.html`
+
+## 決定（クローズ）
+
+照合方式: 設定ファイルに `admin.id` を追加し、入力IDと直接比較する方式を採用。
+`app/config.py`（`AdminConfig.id` フィールド）、`config/accman.ini_sample`（`[admin] id =` キー）、`app/routes/auth.py`（UID照合ロジック）、`templates/admin/login.html`（管理者ID入力欄追加）を修正済み。
+`docs/requirements/confirmed.md`、`docs/design/confirmed_auth.md`、`README.md` も更新済み。
