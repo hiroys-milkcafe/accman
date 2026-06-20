@@ -30,6 +30,15 @@ dnf install python3 python3-pip nginx
 
 ### 2. アプリケーションの配置
 
+実行ユーザとグループを作成する:
+
+```sh
+groupadd --system accman
+useradd --system --no-create-home --shell /sbin/nologin --gid accman accman
+```
+
+アプリを配置し、仮想環境を構築する:
+
 ```sh
 # 任意のパスに配置する（以下は /opt/accman を使用する例）
 cp -r accman/ /opt/accman
