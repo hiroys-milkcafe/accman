@@ -26,7 +26,7 @@
       {% set vals = entry.get(attr_def.attr, ['']) %}
       {% for val in (vals if vals else ['']) %}
       <div class="multi-row">
-        <input type="{{ 'number' if attr_def.type == 'number' else 'text' }}"
+        <input type="{{ attr_def.type if attr_def.type in ('number', 'email') else 'text' }}"
                name="{{ attr_def.attr }}"
                value="{{ val }}"
                {% if attr_def.required and loop.first %}required{% endif %}>
@@ -37,7 +37,7 @@
     <button type="button" class="btn-sm"
             onclick="addRow('multi-{{ attr_def.attr }}', '{{ attr_def.attr }}', '{{ attr_def.type }}')">＋ 追加</button>
     {% else %}
-    <input type="{{ 'number' if attr_def.type == 'number' else 'text' }}"
+    <input type="{{ attr_def.type if attr_def.type in ('number', 'email') else 'text' }}"
            name="{{ attr_def.attr }}"
            value="{{ (entry.get(attr_def.attr) or [''])[0] }}"
            {% if attr_def.required %}required{% endif %}

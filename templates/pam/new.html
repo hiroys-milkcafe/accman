@@ -12,7 +12,7 @@
     {% if attr_def.multi %}
     <div class="multi-field" id="multi-{{ attr_def.attr }}">
       <div class="multi-row">
-        <input type="{{ 'password' if attr_def.type == 'password' else ('number' if attr_def.type == 'number' else 'text') }}"
+        <input type="{{ attr_def.type if attr_def.type in ('password', 'number', 'email') else 'text' }}"
                name="{{ attr_def.attr }}"
                {% if attr_def.required %}required{% endif %}>
         <button type="button" class="btn-sm" onclick="removeRow(this)">－</button>
@@ -21,7 +21,7 @@
     <button type="button" class="btn-sm"
             onclick="addRow('multi-{{ attr_def.attr }}', '{{ attr_def.attr }}', '{{ attr_def.type }}')">＋ 追加</button>
     {% else %}
-    <input type="{{ 'password' if attr_def.type == 'password' else ('number' if attr_def.type == 'number' else 'text') }}"
+    <input type="{{ attr_def.type if attr_def.type in ('password', 'number', 'email') else 'text' }}"
            name="{{ attr_def.attr }}"
            {% if attr_def.required %}required{% endif %}>
     {% endif %}

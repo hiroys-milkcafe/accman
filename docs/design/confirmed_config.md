@@ -122,7 +122,7 @@ class AttributeDef:
     label: str
     required: bool
     multi: bool
-    type: str              # text | password | number
+    type: str              # text | password | number | email
     display_only: bool     # True のとき一般ユーザ編集画面では表示のみ（デフォルト False）
 
 @dataclass

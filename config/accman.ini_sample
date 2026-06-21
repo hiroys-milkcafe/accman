@@ -83,10 +83,11 @@ mail_user = ou=mail,dc=example,dc=com
 ;   label        フォームのラベル（日本語可）
 ;   required     true: 必須入力 / false: 任意入力（空欄で保存するとLDAPから属性削除）
 ;   multi        true: 複数値を入力できる / false: 単一値のみ
-;   type         入力欄の種類（text / password / number）
+;   type         入力欄の種類（text / password / number / email）
 ;                  text     テキスト入力
 ;                  password マスク表示。保存時はSSHAでハッシュ化してLDAPに書き込む
 ;                  number   数値入力
+;                  email    メールアドレス入力。@ を含む形式を必須とする
 ;   display_only true: 一般ユーザの編集画面では表示のみ（入力不可）。管理者は通常通り編集可。
 ;                省略時: false（全ユーザが編集可）
 ; ============================================================
@@ -247,7 +248,7 @@ label = メールアドレス
 ; メインアドレスのほか、エイリアスや別ドメインアドレスも複数登録できる。例: john@example.com
 required = true
 multi = true
-type = text
+type = email
 ; 一般ユーザにはメールアドレス一覧を表示のみにする（管理者は編集可）
 display_only = true
 

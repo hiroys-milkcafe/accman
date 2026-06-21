@@ -99,14 +99,20 @@ def new():
         return render_template('mail/new.html', template=template)
 
     if not session.get('is_admin'):
-        mail_val = attrs.get('mail')
-        if isinstance(mail_val, list):
-            first_mail = mail_val[0] if mail_val else ''
-        else:
-            first_mail = mail_val or ''
-        if '@' not in first_mail:
-            flash('メールアドレスの形式が正しくありません（@ が含まれていません）', 'error')
+        email_attr = next((a for a in template.attributes if a.type == 'email'), None)
+        if email_attr is None:
+            flash('メールアドレス属性が見つかりません', 'error')
             return render_template('mail/new.html', template=template)
+
+        email_val = attrs.get(email_attr.attr)
+        if not email_val:
+            flash(f'{email_attr.label} が指定されていません', 'error')
+            return render_template('mail/new.html', template=template)
+
+        if isinstance(email_val, list):
+            first_mail = email_val[0] if email_val else ''
+        else:
+            first_mail = email_val or ''
 
         domain = first_mail.split('@', 1)[1]
 
