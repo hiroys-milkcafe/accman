@@ -2,8 +2,9 @@ import logging
 import logging.handlers
 import os
 import time
-from flask import Flask, flash, redirect, session, url_for
+from flask import Flask, flash, redirect, request, session, url_for
 from flask_session import Session
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from .config import load_config
 from .ldap_client import CredentialExpiredError
 
@@ -40,6 +41,7 @@ def create_app():
     _setup_syslog(cfg)
 
     Session(app)
+    CSRFProtect(app)
 
     _LOGIN_ENDPOINTS = {'auth.login', 'auth.admin_login', 'auth.logout', 'static'}
 
@@ -70,6 +72,11 @@ def create_app():
                 'is_admin': session.get('is_admin', False),
             }
         return {'pam_templates': [], 'mail_templates': [], 'is_admin': False}
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        flash('不正なリクエストです。ページを再読み込みしてから操作してください。', 'error')
+        return redirect(request.referrer or url_for('auth.index')), 400
 
     @app.errorhandler(CredentialExpiredError)
     def handle_credential_expired(e):

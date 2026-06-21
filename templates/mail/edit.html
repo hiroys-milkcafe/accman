@@ -5,6 +5,7 @@
 <p class="dn-label">DN: <code>{{ dn }}</code></p>
 
 <form method="post" action="{{ url_for('mail.edit') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="dn" value="{{ dn }}">
   <input type="hidden" name="template_id" value="{{ template.id }}">
 

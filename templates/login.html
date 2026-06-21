@@ -4,6 +4,7 @@
 <div class="login-box">
   <h2>ログイン</h2>
   <form method="post" action="{{ url_for('auth.login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="field">
       <label for="uid">ユーザID</label>
       <input type="text" id="uid" name="uid" required autofocus>

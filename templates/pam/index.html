@@ -38,6 +38,7 @@
         <a href="{{ url_for('pam.edit', dn=entry.dn, template=current_tab.id) }}">編集</a>
         <form method="post" action="{{ url_for('pam.delete') }}" class="inline-form"
               onsubmit="return confirm('削除しますか？')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="dn" value="{{ entry.dn }}">
           <input type="hidden" name="tab" value="{{ current_tab.id }}">
           <button type="submit" class="btn-link btn-danger">削除</button>

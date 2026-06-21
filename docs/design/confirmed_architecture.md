@@ -30,6 +30,7 @@
 | テンプレートエンジン | Jinja2（Flask組み込み） |
 | LDAPライブラリ | ldap3 |
 | セッション管理 | Flask-Session（サーバサイド） |
+| CSRF保護 | Flask-WTF（CSRFProtect） |
 | フロントエンドプロキシ | NGINX |
 
 ## ディレクトリ構成

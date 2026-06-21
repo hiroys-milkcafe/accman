@@ -4,6 +4,7 @@
 <div class="login-box">
   <h2>管理者ログイン</h2>
   <form method="post" action="{{ url_for('auth.admin_login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="field">
       <label for="uid">管理者ID</label>
       <input type="text" id="uid" name="uid" required autofocus autocomplete="username">

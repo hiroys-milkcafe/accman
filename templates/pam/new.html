@@ -4,6 +4,7 @@
 <h2>{{ template.name }} 新規作成</h2>
 
 <form method="post" action="{{ url_for('pam.new') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="template_id" value="{{ template.id }}">
 
   {% for attr_def in template.attributes %}
