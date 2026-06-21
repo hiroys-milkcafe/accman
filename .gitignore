@@ -21,3 +21,6 @@ var/
 
 # macOS
 .DS_Store
+
+# バグ報告資料用一時ディレクトリ
+tmp/
