@@ -3,6 +3,7 @@ import logging
 from flask import (Blueprint, current_app, flash, redirect, render_template,
                    request, session, url_for)
 from ldap3.core.exceptions import LDAPException
+from ldap3.utils.dn import escape_rdn
 
 from ..config import AppConfig
 from ..ldap_client import LdapClient
@@ -25,7 +26,7 @@ def login():
         uid = request.form.get('uid', '').strip()
         password = request.form.get('password', '')
         cfg: AppConfig = current_app.config['ACCMAN']
-        bind_dn = f'uid={uid},{cfg.pam_base_dn}'
+        bind_dn = f'uid={escape_rdn(uid) if uid else ""},{cfg.pam_base_dn}'
         client_ip = request.headers.get('X-Real-IP', request.remote_addr)
         try:
             LdapClient(cfg.ldap, bind_dn, password).bind_test()

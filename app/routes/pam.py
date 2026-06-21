@@ -3,6 +3,7 @@ import logging
 from flask import (Blueprint, current_app, flash, redirect, render_template,
                    request, session, url_for)
 from ldap3.core.exceptions import LDAPException
+from ldap3.utils.dn import escape_rdn
 
 from ..auth import get_ldap_client, login_required
 from ..config import AppConfig
@@ -97,7 +98,7 @@ def new():
         flash(f'{template.rdn_attr} は必須です', 'error')
         return render_template('pam/new.html', template=template)
 
-    dn = f'{template.rdn_attr}={rdn_val},{template.base_dn}'
+    dn = f'{template.rdn_attr}={escape_rdn(rdn_val)},{template.base_dn}'
     try:
         get_ldap_client().add(dn, template.object_classes, attrs,
                               password_attrs=password_attrs)

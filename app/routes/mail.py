@@ -3,6 +3,7 @@ import logging
 from flask import (Blueprint, current_app, flash, redirect, render_template,
                    request, session, url_for)
 from ldap3.core.exceptions import LDAPException
+from ldap3.utils.dn import escape_rdn
 
 from ..auth import get_ldap_client, login_required
 from ..config import AppConfig
@@ -124,15 +125,15 @@ def new():
             return redirect(url_for('auth.index'))
 
         container_attr = template.container_attr
-        parent_dn = f'{container_attr}={domain},{container_attr}={pamuid},{template.base_dn}'
+        parent_dn = f'{container_attr}={escape_rdn(domain)},{container_attr}={escape_rdn(pamuid)},{template.base_dn}'
 
         if get_ldap_client().get(parent_dn, ['objectClass']) is None:
             flash(f'ドメイン "{domain}" が存在しません。管理者にドメインの作成を依頼してください。', 'error')
             return render_template('mail/new.html', template=template)
 
-        dn = f'{template.rdn_attr}={rdn_val},{parent_dn}'
+        dn = f'{template.rdn_attr}={escape_rdn(rdn_val)},{parent_dn}'
     else:
-        dn = f'{template.rdn_attr}={rdn_val},{template.base_dn}'
+        dn = f'{template.rdn_attr}={escape_rdn(rdn_val)},{template.base_dn}'
 
     try:
         get_ldap_client().add(dn, template.object_classes, attrs,

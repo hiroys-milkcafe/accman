@@ -24,19 +24,25 @@ parent_dn = f'{container_attr}={domain},{container_attr}={pamuid},{template.base
 - LDAP ACLが最終的な権限制御を担っているため、実害は限定的
 - 上記から現時点での攻撃可能性は低い
 
-## 対応方針（案）
+## 実装内容
 
-`ldap3` の `escape_dn_chars()` を使ってDNに埋め込む前にエスケープする。
+issue_023 に記載の2箇所に加え、コードレビューで同パターンの注入点をさらに3箇所確認。合計5箇所に `ldap3.utils.dn.escape_dn_chars()` を適用した。
 
-```python
-from ldap3.utils.dn import escape_dn_chars
+| ファイル | 対象変数 |
+|---|---|
+| `app/routes/auth.py:29` | `uid`（ログインフォーム入力） |
+| `app/routes/pam.py:101` | `rdn_val`（新規エントリフォーム入力） |
+| `app/routes/mail.py:128` | `domain`（メールアドレスの@以降）、`pamuid`（セッションのbind_dnから抽出） |
+| `app/routes/mail.py:134` | `rdn_val`（一般ユーザの新規エントリフォーム入力） |
+| `app/routes/mail.py:136` | `rdn_val`（管理者の新規エントリフォーム入力） |
 
-bind_dn = f'uid={escape_dn_chars(uid)},{cfg.pam_base_dn}'
-domain_escaped = escape_dn_chars(domain)
-pamuid_escaped = escape_dn_chars(pamuid)
-parent_dn = f'{container_attr}={domain_escaped},{container_attr}={pamuid_escaped},{template.base_dn}'
-```
+## 検証結果
+
+- 通常の英数字uid・rdn_val は escape_rdn で変換されず既存データへの影響なし
+- DN特殊文字を含むuid（例: `dang,ou=injected`）→「ログインに失敗しました」で正常エラー処理
+- 空uid → 修正前は500、修正後は「ログインに失敗しました」で正常エラー処理（`escape_rdn('')` の IndexError に対するガードを追加）
+- 管理者・一般ユーザともに正常ログイン・PAM・メール画面の動作確認済み
 
 ## ステータス
 
-Open
+Closed
