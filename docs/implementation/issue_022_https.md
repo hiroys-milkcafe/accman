@@ -24,6 +24,11 @@ nginx の設定がHTTP（port 80）のみであり、セッションCookieおよ
 
 インフラ側の変更が伴うため、P1・P2 の対応完了後に着手する。
 
+## 対応状況
+
+- アプリ側（`SESSION_COOKIE_SECURE`）は issue_021 にて `secure_cookie` 設定キーで制御できる形で実装済み
+- NGINX側のTLS設定はインフラ作業として実施済み
+
 ## ステータス
 
-Open
+Closed
