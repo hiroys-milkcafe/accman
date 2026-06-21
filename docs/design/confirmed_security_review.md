@@ -32,6 +32,6 @@
 | 優先度 | 内容 | イシュー |
 |---|---|---|
 | P1 | CSRF対策の実装 | [issue_020](../implementation/issue_020_csrf.md) ← **Closed** |
-| P2 | セッションCookieのSameSite・Secure未設定 | [issue_021](../implementation/issue_021_session_cookie_security.md) |
-| P3 | nginxのHTTPS未設定 | [issue_022](../implementation/issue_022_https.md) |
-| P4 | LDAPのDN構築時にユーザ入力が未エスケープ | [issue_023](../implementation/issue_023_ldap_dn_injection.md) |
+| P2 | セッションCookieのSameSite・Secure未設定 | [issue_021](../implementation/issue_021_session_cookie_security.md) ← **Closed** |
+| P3 | nginxのHTTPS未設定 | [issue_022](../implementation/issue_022_https.md) ← **Closed** |
+| P4 | LDAPのDN構築時にユーザ入力が未エスケープ | [issue_023](../implementation/issue_023_ldap_dn_injection.md) ← **Closed** |
