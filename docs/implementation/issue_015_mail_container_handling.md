@@ -56,9 +56,30 @@ cn=mail_accounts,...
 - 現状、管理者の新規作成は `template.base_dn` 直下に作成する（構造的に誤り）
 - 管理者向けの親OU選択UIは管理画面設計フェーズで対応する
 
+### ④ display_only 属性設定の追加（mail 属性）
+
+- `[template:mail_user:mail]` に `display_only = true` を設定
+- 一般ユーザの編集画面では `mail` 属性を読み取り専用テキストで表示（フォーム送信時も変更を送らない）
+- 管理者は通常通り編集可能
+- 理由: 一般ユーザが他ユーザ宛メールのアドレスを自アカウントに追加できてしまうリスクを防ぐ
+
+### ⑤ 一覧のDN階層順グルーピング表示
+
+- エントリを `_entry_sort_key(dn, base_dn)` でソート（base_dn からの相対パスを親→子順のタプルで比較）
+- 各エントリに `_depth`（= タプル長 - 1）を付与し、第1セルに `padding-left: calc(0.8rem + {depth * 1.5}rem)` を適用
+- コンテナ行に `class="mail-group-row"` を付与（背景色 `#edf2f7`、太字）
+- base_dn エントリ自体は検索結果からフィルタ除外
+- **コンテナ行のcolspan**: `colspan="{{ display_attrs|length + 1 }}"` で操作列まで含む1セルにする。操作列を空の `<td class="actions">` として別セルにすると `display: flex` の空セル高さ不一致により行区切り線がずれるため
+
 ## 変更ファイル
 
-- `app/config.py`（`Template.container_attr` フィールド追加、load_configで読み込み）
-- `config/accman.ini_sample`（`container_attr` 設定例追加）
-- `app/routes/mail.py`（index: コンテナフラグ付与、new: 一般ユーザ親DN導出、session import追加）
-- `templates/mail/index.html`（コンテナエントリ表示・ボタン制御、ヘルプ更新）
+- `app/config.py`（`AttributeDef.display_only` フィールド追加、`Template.container_attr` フィールド追加、load_configで読み込み）
+- `config/accman.ini_sample`（`container_attr`・`display_only` 設定例追加）
+- `app/routes/mail.py`（index: 階層ソート・depthフラグ付与・コンテナフラグ付与・base_dnフィルタ、new: 一般ユーザ親DN導出・session import、edit: skip_attrs による display_only スキップ）
+- `app/routes/common.py`（`collect_form_attrs` に `skip_attrs` パラメータ追加）
+- `templates/mail/index.html`（階層インデント・コンテナ行スタイル・ボタン制御・colspan修正・ヘルプ更新）
+- `templates/mail/edit.html`（display_only 属性の読み取り専用表示）
+- `templates/pam/edit.html`（display_only 属性の読み取り専用表示）
+- `static/css/style.css`（`.mail-group-row`・`.field-display` クラス追加）
+- `docs/design/confirmed_config.md`（AttributeDef・Template データクラス更新）
+- `docs/design/confirmed_mail_ui.md`（コンテナ処理・display_only・階層グルーピング・親OU自動判定を追記）
