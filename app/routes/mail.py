@@ -99,8 +99,11 @@ def new():
         return render_template('mail/new.html', template=template)
 
     if not session.get('is_admin'):
-        mail_vals = attrs.get('mail', [])
-        first_mail = mail_vals[0] if mail_vals else ''
+        mail_val = attrs.get('mail')
+        if isinstance(mail_val, list):
+            first_mail = mail_val[0] if mail_val else ''
+        else:
+            first_mail = mail_val or ''
         if '@' not in first_mail:
             flash('メールアドレスの形式が正しくありません（@ が含まれていません）', 'error')
             return render_template('mail/new.html', template=template)

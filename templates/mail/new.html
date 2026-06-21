@@ -11,18 +11,38 @@
     <label>{{ attr_def.label }}{% if attr_def.required %} <span class="required">*</span>{% endif %}</label>
     {% if attr_def.multi %}
     <div class="multi-field" id="multi-{{ attr_def.attr }}">
+      {% if request.method == 'POST' and attr_def.type != 'password' %}
+        {% for val in request.form.getlist(attr_def.attr) if val %}
+        <div class="multi-row">
+          <input type="{{ 'number' if attr_def.type == 'number' else 'text' }}"
+                 name="{{ attr_def.attr }}"
+                 value="{{ val }}"
+                 {% if attr_def.required and loop.first %}required{% endif %}>
+          <button type="button" class="btn-sm" onclick="removeRow(this)">－</button>
+        </div>
+        {% else %}
+        <div class="multi-row">
+          <input type="{{ 'number' if attr_def.type == 'number' else 'text' }}"
+                 name="{{ attr_def.attr }}"
+                 {% if attr_def.required %}required{% endif %}>
+          <button type="button" class="btn-sm" onclick="removeRow(this)">－</button>
+        </div>
+        {% endfor %}
+      {% else %}
       <div class="multi-row">
         <input type="{{ 'password' if attr_def.type == 'password' else ('number' if attr_def.type == 'number' else 'text') }}"
                name="{{ attr_def.attr }}"
                {% if attr_def.required %}required{% endif %}>
         <button type="button" class="btn-sm" onclick="removeRow(this)">－</button>
       </div>
+      {% endif %}
     </div>
     <button type="button" class="btn-sm"
             onclick="addRow('multi-{{ attr_def.attr }}', '{{ attr_def.attr }}', '{{ attr_def.type }}')">＋ 追加</button>
     {% else %}
     <input type="{{ 'password' if attr_def.type == 'password' else ('number' if attr_def.type == 'number' else 'text') }}"
            name="{{ attr_def.attr }}"
+           {% if attr_def.type != 'password' and request.method == 'POST' %}value="{{ request.form.get(attr_def.attr, '') }}"{% endif %}
            {% if attr_def.required %}required{% endif %}>
     {% endif %}
   </div>
