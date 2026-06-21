@@ -18,7 +18,7 @@
 
 - [ ] 変更した機能・設定に関連する `docs/design/confirmed_*.md` を更新したか
 - [ ] 変更した設定キー・データ構造が `docs/requirements/confirmed.md` と整合しているか
-- [ ] 対応したイシューの `docs/implementation/issue_*.md` のステータスを Closed に更新したか
+- [ ] ユーザから明示的に「クローズして」と指示されたイシューのステータスを Closed に更新したか（実装完了・ユニットテスト通過だけでは Closed にしない。ユーザによる確認・承認が必要）
 - [ ] `config/accman.ini_sample` への反映が必要な設定変更をしていないか
 - [ ] git commit・git push を実行していないか（ユーザの明示的な指示がない限り禁止）
 
