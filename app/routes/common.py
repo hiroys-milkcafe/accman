@@ -1,11 +1,15 @@
 from flask import request
 
 
-def collect_form_attrs(template, is_edit: bool = False) -> tuple[dict, list[str], list[str]]:
+def collect_form_attrs(template, is_edit: bool = False,
+                       skip_attrs: set = None) -> tuple[dict, list[str], list[str]]:
+    skip_attrs = skip_attrs or set()
     attrs: dict = {}
     password_attrs: list[str] = []
     errors: list[str] = []
     for attr_def in template.attributes:
+        if attr_def.attr in skip_attrs:
+            continue
         if attr_def.type == 'password':
             password_attrs.append(attr_def.attr)
             val = request.form.get(attr_def.attr, '')

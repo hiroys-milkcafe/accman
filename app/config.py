@@ -38,6 +38,7 @@ class AttributeDef:
     required: bool
     multi: bool
     type: str  # text | password | number
+    display_only: bool = False  # True のとき一般ユーザには表示のみ（管理者は通常通り編集可）
 
 
 @dataclass
@@ -132,6 +133,7 @@ def load_config(path: Optional[str] = None) -> AppConfig:
                     required=a.getboolean('required', False),
                     multi=a.getboolean('multi', False),
                     type=a.get('type', 'text'),
+                    display_only=a.getboolean('display_only', False),
                 ))
 
         scope = meta['scope']

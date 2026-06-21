@@ -147,7 +147,11 @@ def edit():
     if not template or template.scope != 'mail' or not dn:
         return redirect(url_for('mail.index'))
 
-    changes, password_attrs, errors = collect_form_attrs(template, is_edit=True)
+    skip_attrs = set() if session.get('is_admin') else {
+        a.attr for a in template.attributes if a.display_only
+    }
+    changes, password_attrs, errors = collect_form_attrs(template, is_edit=True,
+                                                         skip_attrs=skip_attrs)
     for err in errors:
         flash(err, 'error')
     if errors:

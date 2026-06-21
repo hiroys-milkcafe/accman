@@ -41,8 +41,15 @@ name = PAMユーザ
 scope = pam
 rdn_attr = uid
 object_classes = posixAccount, shadowAccount
+; container_attr = ou   ← 省略時デフォルト ou
 
 [template:pam_user:uid]
+label = ユーザID
+required = true
+multi = false
+type = text
+; display_only = false  ← 省略時デフォルト false（一般ユーザも編集可）
+
 ...
 ```
 
@@ -116,6 +123,7 @@ class AttributeDef:
     required: bool
     multi: bool
     type: str              # text | password | number
+    display_only: bool     # True のとき一般ユーザ編集画面では表示のみ（デフォルト False）
 
 @dataclass
 class Template:
@@ -126,6 +134,7 @@ class Template:
     rdn_attr: str
     object_classes: list[str]
     attributes: list[AttributeDef]
+    container_attr: str    # コンテナエントリを識別するRDN属性名（デフォルト 'ou'）
 
 @dataclass
 class AppConfig:

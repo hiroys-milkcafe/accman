@@ -11,7 +11,12 @@
   {% for attr_def in template.attributes %}
   <div class="field">
     <label>{{ attr_def.label }}{% if attr_def.required %} <span class="required">*</span>{% endif %}</label>
-    {% if attr_def.type == 'password' %}
+    {% if attr_def.display_only and not is_admin %}
+    <p class="field-display">
+      {% set vals = entry.get(attr_def.attr, []) %}
+      {% if vals %}{{ vals | join(', ') }}{% else %}（未設定）{% endif %}
+    </p>
+    {% elif attr_def.type == 'password' %}
     <input type="hidden" name="{{ attr_def.attr }}" id="hidden-pw-{{ attr_def.attr }}">
     <button type="button" class="btn-secondary"
             onclick="openPasswordModal('{{ attr_def.attr }}', '{{ attr_def.label }}')">パスワード変更</button>
