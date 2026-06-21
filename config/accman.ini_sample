@@ -229,6 +229,9 @@ scope = mail
 ; DNは uid=<アカウントID>,<[mail] mail_user の値> の形式で生成される
 rdn_attr = uid
 object_classes = inetOrgPerson
+; コンテナエントリ（OU等）を識別するRDN属性名（省略時: ou）
+; 一覧でこの属性で始まるRDNを持つエントリはコンテナとして表示し、編集・削除ボタンを表示しない
+; container_attr = ou
 
 [template:mail_user:uid]
 label = メールアカウントID

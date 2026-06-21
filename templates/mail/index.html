@@ -31,6 +31,10 @@
   <tbody>
     {% for entry in entries %}
     <tr>
+      {% if entry._is_container %}
+      <td colspan="{{ display_attrs|length }}">{{ entry._container_label }}</td>
+      <td class="actions"></td>
+      {% else %}
       {% for attr_def in display_attrs %}
       <td>{{ entry.get(attr_def.attr, []) | join(', ') }}</td>
       {% endfor %}
@@ -43,6 +47,7 @@
           <button type="submit" class="btn-link btn-danger">削除</button>
         </form>
       </td>
+      {% endif %}
     </tr>
     {% else %}
     <tr><td colspan="{{ display_attrs|length + 1 }}">エントリがありません</td></tr>
@@ -61,9 +66,15 @@
 {% endif %}
 <p>MTAおよびIMAP/POPサーバが使用するメールアカウント情報を管理します。</p>
 
+<h4>一覧の見方</h4>
+<ul>
+  <li>OU（<code>ou=xxx</code> で表示される行）はドメインやユーザの区分けを表すコンテナです。編集・削除はできません</li>
+  <li>メールアカウント行に「編集」「削除」ボタンが表示されます</li>
+</ul>
+
 <h4>操作</h4>
 <ul>
-  <li><strong>新規作成</strong>: 新しいメールアカウントを作成します</li>
+  <li><strong>新規作成</strong>: 新しいメールアカウントを作成します。メールアドレスのドメインをもとに格納先が自動判定されます</li>
   <li><strong>編集</strong>: 選択したアカウントの内容を変更します</li>
   <li><strong>削除</strong>: アカウントを削除します。削除後は元に戻せません</li>
 </ul>

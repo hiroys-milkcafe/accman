@@ -49,6 +49,7 @@ class Template:
     rdn_attr: str
     object_classes: list[str]
     attributes: list[AttributeDef]
+    container_attr: str = 'ou'  # コンテナエントリ（OU等）を識別するRDN属性名
 
 
 @dataclass
@@ -149,6 +150,7 @@ def load_config(path: Optional[str] = None) -> AppConfig:
             rdn_attr=meta['rdn_attr'],
             object_classes=object_classes,
             attributes=attributes,
+            container_attr=meta.get('container_attr', 'ou'),
         ))
 
     secret_key = os.environ.get('ACCMAN_SECRET_KEY')

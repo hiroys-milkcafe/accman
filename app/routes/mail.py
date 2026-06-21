@@ -1,7 +1,7 @@
 import logging
 
 from flask import (Blueprint, current_app, flash, redirect, render_template,
-                   request, url_for)
+                   request, session, url_for)
 from ldap3.core.exceptions import LDAPException
 
 from ..auth import get_ldap_client, login_required
@@ -40,6 +40,13 @@ def index():
         logger.warning('LDAP search failed: %s: %s', current_tab.base_dn, e)
         flash(str(e), 'error')
 
+    container_prefix = current_tab.container_attr.lower() + '='
+    for entry in entries:
+        rdn = entry['dn'].split(',')[0].lower()
+        is_container = rdn.startswith(container_prefix)
+        entry['_is_container'] = is_container
+        entry['_container_label'] = entry['dn'].split(',')[0] if is_container else ''
+
     return render_template('mail/index.html', templates=templates,
                            current_tab=current_tab, entries=entries,
                            display_attrs=display_attrs)
@@ -75,7 +82,33 @@ def new():
         flash(f'{template.rdn_attr} は必須です', 'error')
         return render_template('mail/new.html', template=template)
 
-    dn = f'{template.rdn_attr}={rdn_val},{template.base_dn}'
+    if not session.get('is_admin'):
+        mail_vals = attrs.get('mail', [])
+        first_mail = mail_vals[0] if mail_vals else ''
+        if '@' not in first_mail:
+            flash('メールアドレスの形式が正しくありません（@ が含まれていません）', 'error')
+            return render_template('mail/new.html', template=template)
+
+        domain = first_mail.split('@', 1)[1]
+
+        bind_dn = session.get('bind_dn', '')
+        rdn_part = bind_dn.split(',', 1)[0] if bind_dn else ''
+        pamuid = rdn_part.split('=', 1)[1] if '=' in rdn_part else ''
+        if not pamuid:
+            flash('セッション情報の取得に失敗しました', 'error')
+            return redirect(url_for('auth.index'))
+
+        container_attr = template.container_attr
+        parent_dn = f'{container_attr}={domain},{container_attr}={pamuid},{template.base_dn}'
+
+        if get_ldap_client().get(parent_dn, ['objectClass']) is None:
+            flash(f'ドメイン "{domain}" が存在しません。管理者にドメインの作成を依頼してください。', 'error')
+            return render_template('mail/new.html', template=template)
+
+        dn = f'{template.rdn_attr}={rdn_val},{parent_dn}'
+    else:
+        dn = f'{template.rdn_attr}={rdn_val},{template.base_dn}'
+
     try:
         get_ldap_client().add(dn, template.object_classes, attrs,
                               password_attrs=password_attrs)
@@ -151,5 +184,3 @@ def delete():
         logger.warning('LDAP delete failed: %s: %s', dn, e)
         flash(str(e), 'error')
     return redirect(url_for('mail.index', tab=tab))
-
-
