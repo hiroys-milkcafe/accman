@@ -323,3 +323,10 @@ tr:hover td { background: #f9f9f9; }
 }
 .modal-box h3 { margin-bottom: 1rem; }
 .pw-badge { color: #38a169; font-size: 13px; margin-left: 0.5rem; }
+
+/* ---- Mail group rows (container entries) ---- */
+.mail-group-row td { background: #edf2f7; font-weight: bold; }
+.mail-group-row:hover td { background: #e2e8f0; }
+
+/* ---- display_only field (read-only text in edit form) ---- */
+.field-display { padding: 0.4rem 0; color: #333; }

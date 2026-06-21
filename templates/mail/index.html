@@ -30,13 +30,16 @@
   </thead>
   <tbody>
     {% for entry in entries %}
-    <tr>
+    <tr{% if entry._is_container %} class="mail-group-row"{% endif %}>
       {% if entry._is_container %}
-      <td colspan="{{ display_attrs|length }}">{{ entry._container_label }}</td>
-      <td class="actions"></td>
+      <td style="padding-left: calc(0.8rem + {{ entry._depth * 1.5 }}rem)" colspan="{{ display_attrs|length + 1 }}">{{ entry._container_label }}</td>
       {% else %}
       {% for attr_def in display_attrs %}
+      {% if loop.first %}
+      <td style="padding-left: calc(0.8rem + {{ entry._depth * 1.5 }}rem)">{{ entry.get(attr_def.attr, []) | join(', ') }}</td>
+      {% else %}
       <td>{{ entry.get(attr_def.attr, []) | join(', ') }}</td>
+      {% endif %}
       {% endfor %}
       <td class="actions">
         <a href="{{ url_for('mail.edit', dn=entry.dn, template=current_tab.id) }}">編集</a>

@@ -14,6 +14,14 @@ logger = logging.getLogger('accman')
 bp = Blueprint('mail', __name__)
 
 
+def _entry_sort_key(dn: str, base_dn: str) -> tuple:
+    """DN を base_dn からの相対パス（親→子順）のタプルで返す。ソート・深さ計算に使用。"""
+    base_parts = [p.strip().lower() for p in base_dn.split(',')]
+    dn_parts = [p.strip().lower() for p in dn.split(',')]
+    relative = dn_parts[:len(dn_parts) - len(base_parts)]
+    return tuple(reversed(relative))
+
+
 @bp.route('/')
 @login_required
 def index():
@@ -33,17 +41,25 @@ def index():
 
     entries = []
     try:
-        entries = get_ldap_client().search(current_tab.base_dn, '(objectClass=*)', attr_names)
+        raw = get_ldap_client().search(current_tab.base_dn, '(objectClass=*)', attr_names)
+        # base_dn エントリ自体を除外（SUBTREE 検索で含まれる場合がある）
+        entries = [e for e in raw
+                   if e['dn'].lower() != current_tab.base_dn.lower()]
     except CredentialExpiredError:
         raise
     except Exception as e:
         logger.warning('LDAP search failed: %s: %s', current_tab.base_dn, e)
         flash(str(e), 'error')
 
+    # DN 階層順にソートし、depth とコンテナフラグを付与
     container_prefix = current_tab.container_attr.lower() + '='
+    entries.sort(key=lambda e: _entry_sort_key(e['dn'], current_tab.base_dn))
+
     for entry in entries:
+        key = _entry_sort_key(entry['dn'], current_tab.base_dn)
         rdn = entry['dn'].split(',')[0].lower()
         is_container = rdn.startswith(container_prefix)
+        entry['_depth'] = len(key) - 1
         entry['_is_container'] = is_container
         entry['_container_label'] = entry['dn'].split(',')[0] if is_container else ''
 
