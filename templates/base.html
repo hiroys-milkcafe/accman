@@ -11,19 +11,19 @@
     <div class="header-inner">
       <a class="site-title" href="{{ url_for('auth.index') }}">accman</a>
       <nav>
-        {% if session.bind_dn %}
-        {% if pam_templates %}
-        <a href="{{ url_for('pam.index') }}">PAM設定</a>
-        {% endif %}
-        {% if mail_templates %}
-        <a href="{{ url_for('mail.index') }}">メール管理</a>
-        {% endif %}
-        {% endif %}
         <button type="button" class="btn-manual" onclick="openManual()">ヘルプ</button>
         {% if session.bind_dn %}
         <div class="hamburger-menu" id="hamburger-menu">
           <button type="button" class="btn-hamburger" onclick="toggleHamburger(event)" aria-label="メニュー">&#9776;</button>
           <div class="hamburger-dropdown">
+            <a href="{{ url_for('auth.index') }}" class="hamburger-item">ホーム</a>
+            {% if pam_templates %}
+            <a href="{{ url_for('pam.index') }}" class="hamburger-item">PAM設定</a>
+            {% endif %}
+            {% if mail_templates %}
+            <a href="{{ url_for('mail.index') }}" class="hamburger-item">メール管理</a>
+            {% endif %}
+            <hr class="hamburger-divider">
             <form action="{{ url_for('auth.logout') }}" method="post">
               <button type="submit" class="hamburger-item">ログアウト</button>
             </form>
