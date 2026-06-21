@@ -110,6 +110,7 @@ class AdminConfig:
 class SessionConfig:
     admin_timeout: int     # 秒
     user_timeout: int      # 秒
+    secure_cookie: bool    # True: Cookie に Secure フラグを付与（NGINX が HTTPS を終端する環境で使用）
 
 @dataclass
 class LogConfig:

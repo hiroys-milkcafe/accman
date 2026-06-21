@@ -30,6 +30,7 @@ def create_app():
 
     app.config['SECRET_KEY'] = os.environ['ACCMAN_SECRET_KEY']
     app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     session_dir = os.environ.get(
         'ACCMAN_SESSION_DIR',
         os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'var', 'sessions'),
@@ -38,6 +39,7 @@ def create_app():
 
     cfg = load_config()
     app.config['ACCMAN'] = cfg
+    app.config['SESSION_COOKIE_SECURE'] = cfg.session.secure_cookie
     _setup_syslog(cfg)
 
     Session(app)

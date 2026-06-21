@@ -39,6 +39,10 @@ syslog_facility = local3
 admin_timeout = 3600
 ; 一般ユーザセッションのタイムアウト時間（秒）。例: 28800 = 8時間
 user_timeout = 28800
+; セッションCookieに Secure フラグを付与するかどうか（true/false）。
+; NGINX がブラウザからの通信を HTTPS で受けている場合は true に設定する。
+; HTTP 環境で true にするとログインできなくなるため注意。
+secure_cookie = false
 
 ; ---- PAMアカウント設定 ----
 [pam]

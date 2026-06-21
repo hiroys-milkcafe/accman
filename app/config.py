@@ -21,8 +21,9 @@ class AdminConfig:
 
 @dataclass
 class SessionConfig:
-    admin_timeout: int  # seconds
-    user_timeout: int   # seconds
+    admin_timeout: int   # seconds
+    user_timeout: int    # seconds
+    secure_cookie: bool  # True: Cookie に Secure フラグを付与（NGINX が HTTPS を終端する環境で使用）
 
 
 @dataclass
@@ -98,6 +99,7 @@ def load_config(path: Optional[str] = None) -> AppConfig:
     session_cfg = SessionConfig(
         admin_timeout=int(session_sec['admin_timeout']),
         user_timeout=int(session_sec['user_timeout']),
+        secure_cookie=session_sec.getboolean('secure_cookie', False),
     )
 
     log_cfg = LogConfig(
